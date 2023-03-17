@@ -38,8 +38,6 @@ cp cmdline-tools/ ~/android_sdk
 # 安装 android 环境
 sdkmanager --install "platforms;android-29"
 sdkmanager --install "ndk;25.0.8775105"
-sdkmanager --install "ndk;21.4.7075529"
-
 ```
 
 ## 交叉编译
@@ -49,5 +47,5 @@ sdkmanager --install "ndk;21.4.7075529"
 export https_proxy="http://172.16.101.68:7890"
 export http_proxy="http://172.16.101.68:7890"
 ./build.sh --android --android_sdk_path /root/android_sdk --android_ndk_path /root/android_sdk/ndk/25.0.8775105 --use_nnapi --build_shared_lib --android_abi arm64-v8a --android_api 29 --cmake_generator Ninja 
-
+# 编译完成后取出libonnxruntime.so
 ```
