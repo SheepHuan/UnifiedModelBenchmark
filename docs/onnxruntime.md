@@ -1,17 +1,22 @@
 # 编译onnxruntime库 （基于Ubuntu20.04环境编译）
 
 ```bash
-cd 3rd-party/onnxruntime-1.14.1.tar.gz
-tar -zxvf
-```
-
-## Build for Android (结合[此文档](https://onnxruntime.ai/docs/build/android.html))
-
-```bash
 git clone --recursive https://github.com/microsoft/onnxruntime.git
 apt install libssl-dev build-essential
 git checkout v1.14.1
 ```
+
+## Build for Linux [doc](https://onnxruntime.ai/docs/build/inferencing.html)
+```bash
+export https_proxy="http://172.16.101.68:7890"
+# 默认编译amd64的CPU
+./build.sh --config RelWithDebInfo --build_shared_lib --parallel --cmake_generator Ninja 
+```
+
+
+
+## Build for Android [doc](https://onnxruntime.ai/docs/build/android.html)
+
 ### 环境准备
 #### 环境
 ```bash
@@ -40,8 +45,8 @@ sdkmanager --install "platforms;android-29"
 sdkmanager --install "ndk;25.0.8775105"
 ```
 
-## 交叉编译
-=
+### 交叉编译
+
 
 ```bash
 export https_proxy="http://172.16.101.68:7890"

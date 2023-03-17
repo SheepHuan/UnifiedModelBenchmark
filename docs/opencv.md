@@ -1,5 +1,21 @@
 # opencv编译
 
+## opencv for linux
+```bash
+export https_proxy="http://172.16.101.124:7890"
+# cmake命令
+cmake -DBUILD_ANDROID_PROJECTS=OFF \
+-DCMAKE_BUILD_TYPE=Release  \
+-DANDROID_STL=c++_shared \
+-DBUILD_SHARED_LIBS=ON \
+-DCMAKE_INSTALL_PREFIX=/workspace/opencv-4.7.0/build/install ..
+# 编译好的库再install目录里面
+make -j8
+make install
+
+```
+
+
 ## opencv for android
 ```bash
 # 下载opencv 4.7.0
