@@ -3,9 +3,14 @@ project (Benchmark)
 set(CMAKE_CXX_STANDARD 17)
 set(APP_NAME main)
 
-# 导入头文件
+# 支持gdb调试
+SET(CMAKE_BUILD_TYPE "Debug")
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")
+SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
+# 导入头文件
 include_directories(
+    "${CMAKE_SOURCE_DIR}/include"
     "${CMAKE_SOURCE_DIR}/include/opencv"
     "${CMAKE_SOURCE_DIR}/include/onnxruntime"
 )
