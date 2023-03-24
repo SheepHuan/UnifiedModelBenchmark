@@ -14,12 +14,16 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/include/opencv"
     "${CMAKE_SOURCE_DIR}/include/onnxruntime"
 )
-
 # 添加共享库搜索路径
-link_directories(
-    "${CMAKE_SOURCE_DIR}/libs/onnxruntime/linux/amd64"
-    "${CMAKE_SOURCE_DIR}/libs/opencv/linux/amd64")
-
+if (TARGET_OS STREQUAL "linux")
+    link_directories(
+        "${CMAKE_SOURCE_DIR}/libs/onnxruntime/linux/amd64"
+        "${CMAKE_SOURCE_DIR}/libs/opencv/linux/amd64")
+elseif(TARGET_OS STREQUAL "android")
+    link_directories(
+        "${CMAKE_SOURCE_DIR}/libs/onnxruntime/android/arm64-v8a"
+        "${CMAKE_SOURCE_DIR}/libs/opencv/android/arm64-v8a/4.7.0")
+endif()
 # 声明共享库
 set(OpenCVLib
     opencv_dnn
