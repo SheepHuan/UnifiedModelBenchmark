@@ -3,6 +3,7 @@ project (Benchmark)
 set(CMAKE_CXX_STANDARD 17)
 set(APP_NAME main)
 
+
 # 支持gdb调试
 SET(CMAKE_BUILD_TYPE "Debug")
 SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")
@@ -15,6 +16,7 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/include/opencv/opencv2"
     "${CMAKE_SOURCE_DIR}/include/onnxruntime"
     "${CMAKE_SOURCE_DIR}/include/onnxruntime/core"
+    "${CMAKE_SOURCE_DIR}/include/onnxruntime/core/session"
 )
 # 添加共享库搜索路径
 if (TARGET_OS STREQUAL "linux")
@@ -23,6 +25,7 @@ if (TARGET_OS STREQUAL "linux")
         "${CMAKE_SOURCE_DIR}/libs/opencv/linux/amd64"
         "${CMAKE_SOURCE_DIR}/libs/gflags/linux/amd64")
 elseif(TARGET_OS STREQUAL "android")
+    add_definitions(-DANDROID_PLATFORM)
     link_directories(
         "${CMAKE_SOURCE_DIR}/libs/onnxruntime/android/arm64-v8a"
         "${CMAKE_SOURCE_DIR}/libs/opencv/android/arm64-v8a/4.7.0"
@@ -51,8 +54,7 @@ set(OrtLib
     onnxruntime)
 
 set(gflagsLib
-    gflags_nothreads
-    gflags)
+    gflags_nothreads)
 
 # 构建可执行文件
 add_executable(${APP_NAME} "src/onnxruntime_android.cpp")

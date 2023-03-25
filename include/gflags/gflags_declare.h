@@ -40,7 +40,7 @@
 
 // ---------------------------------------------------------------------------
 // Namespace of gflags library symbols.
-#define GFLAGS_NAMESPACE google
+#define GFLAGS_NAMESPACE gflags
 
 // ---------------------------------------------------------------------------
 // Windows DLL import/export.

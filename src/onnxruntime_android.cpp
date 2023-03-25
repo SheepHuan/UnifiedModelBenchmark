@@ -1,5 +1,7 @@
 #include "core/session/onnxruntime_cxx_api.h"
+#ifdef ANDROID_PLATFORM
 #include "providers/nnapi/nnapi_provider_factory.h"
+#endif
 #include "opencv2/opencv.hpp"
 #include <iostream>
 #include <cstdio>
@@ -69,12 +71,17 @@ int main(int argc, char **argv)
     // 注册NNApi
     if (FLAGS_use_nnapi)
     {
+
+/*这里可以设置文档地址(https://onnxruntime.ai/docs/execution-providers/NNAPI-ExecutionProvider.html)，例如下:
+nnapi_flags |= NNAPI_FLAG_USE_FP16;
+*/
+#ifdef ANDROID_PLATFORM
         uint32_t nnapi_flags = 0;
-        /*这里可以设置文档地址(https://onnxruntime.ai/docs/execution-providers/NNAPI-ExecutionProvider.html)，例如下:
-        nnapi_flags |= NNAPI_FLAG_USE_FP16;
-        */
         nnapi_flags |= NNAPI_FLAG_CPU_ONLY;
         Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_Nnapi(session_options, nnapi_flags));
+#else
+        mlog::error("Current Complier is not for android!");
+#endif
     }
 
     Ort::Session session{env, model_path.c_str(), session_options}; // CPU

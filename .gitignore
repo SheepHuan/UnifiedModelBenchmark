@@ -2,5 +2,5 @@
 builds/
 build/
 samples/
-.vscode
+.vscode/
 libs/
