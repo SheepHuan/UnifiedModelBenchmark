@@ -1,5 +1,9 @@
 # Benchmark
 
+```bash
+./main --model_path="/workspace/UnifiedModelBenchmark/samples/yolov4.onnx" --image_path="/workspace/UnifiedModelBenchmark/samples/dog.jpg"
+```
+
 ## 编译指令
 ```bash
 # linux 

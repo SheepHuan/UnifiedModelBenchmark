@@ -18,11 +18,13 @@ include_directories(
 if (TARGET_OS STREQUAL "linux")
     link_directories(
         "${CMAKE_SOURCE_DIR}/libs/onnxruntime/linux/amd64"
-        "${CMAKE_SOURCE_DIR}/libs/opencv/linux/amd64")
+        "${CMAKE_SOURCE_DIR}/libs/opencv/linux/amd64"
+        "${CMAKE_SOURCE_DIR}/libs/gflags/linux/amd64")
 elseif(TARGET_OS STREQUAL "android")
     link_directories(
         "${CMAKE_SOURCE_DIR}/libs/onnxruntime/android/arm64-v8a"
-        "${CMAKE_SOURCE_DIR}/libs/opencv/android/arm64-v8a/4.7.0")
+        "${CMAKE_SOURCE_DIR}/libs/opencv/android/arm64-v8a/4.7.0"
+        "${CMAKE_SOURCE_DIR}/libs/gflags/android/arm64-v8a")
 endif()
 # 声明共享库
 set(OpenCVLib
@@ -46,6 +48,10 @@ set(OpenCVLib
 set(OrtLib
     onnxruntime)
 
+set(gflagsLib
+    gflags_nothreads
+    gflags)
+
 # 构建可执行文件
 add_executable(${APP_NAME} "src/onnxruntime_android.cpp")
 
@@ -54,4 +60,5 @@ target_link_libraries(
     ${APP_NAME} 
     ${OpenCVLib} 
     ${OrtLib}
+    ${gflagsLib}
 )

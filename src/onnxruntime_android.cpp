@@ -3,7 +3,11 @@
 #include <iostream>
 #include <cstdio>
 #include "mutils/log.hpp"
+#include <gflags/gflags.h>
 
+DEFINE_string(model_path,"","*.onnx");
+DEFINE_string(image_path,"","*.png/*.jpg");
+DEFINE_string(ep,"","cpu,nnapi");
 char* copy_string(char *src){
     char * dst = (char *)malloc(sizeof(char)*strlen(src));
     memcpy(dst,src,sizeof(char)*strlen(src));
@@ -53,10 +57,12 @@ int run(Ort::Session &session, float *image, size_t image_size)
     return 0;
 }
 
-int main()
+int main(int argc, char **argv)
 {
-    std::string model_path = "/workspace/UnifiedModelBenchmark/samples/yolov4.onnx";
-    std::string image_path = "/workspace/UnifiedModelBenchmark/samples/dog.jpg";
+     // 解析命令行参数
+    gflags::ParseCommandLineFlags(&argc, &argv, true);
+    std::string model_path = FLAGS_model_path;
+    std::string image_path = FLAGS_image_path;
     Ort::Env env;
     Ort::SessionOptions session_options;
     session_options.EnableProfiling("result_");
