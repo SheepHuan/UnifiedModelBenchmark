@@ -12,7 +12,9 @@ SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 include_directories(
     "${CMAKE_SOURCE_DIR}/include"
     "${CMAKE_SOURCE_DIR}/include/opencv"
+    "${CMAKE_SOURCE_DIR}/include/opencv/opencv2"
     "${CMAKE_SOURCE_DIR}/include/onnxruntime"
+    "${CMAKE_SOURCE_DIR}/include/onnxruntime/core"
 )
 # 添加共享库搜索路径
 if (TARGET_OS STREQUAL "linux")
