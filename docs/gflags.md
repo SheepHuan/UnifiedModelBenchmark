@@ -15,3 +15,11 @@ cmake  -DCMAKE_TOOLCHAIN_FILE="/root/android_sdk/ndk/25.0.8775105/build/cmake/an
 
 make
 ```
+
+## 链接到本仓库的子项目
+
+```bash
+git submodule add <子项目的仓库地址> <本地目录>
+git submodule add https://github.com/gflags/gflags.git 3rd-party/gflags
+
+```

@@ -4,12 +4,16 @@
 #endif
 #include "opencv2/opencv.hpp"
 #include <iostream>
+#include <sstream>
+#include <string>
 #include <cstdio>
 #include "mutils/log.hpp"
 #include <gflags/gflags.h>
 
 DEFINE_string(model_path, "", "*.onnx");
 DEFINE_string(image_path, "", "*.png/*.jpg");
+DEFINE_string(image_shape, "", "1x3x112x112");
+DEFINE_string(data_type, "", "float32");
 DEFINE_bool(use_nnapi, false, "use nnapi");
 char *copy_string(char *src)
 {
@@ -43,6 +47,7 @@ int run(Ort::Session &session, float *image, size_t image_size)
         std::cout << std::endl;
         Ort::AllocatedStringPtr input_name = session.GetInputNameAllocated(i, allocator);
         input_names.push_back(copy_string(input_name.get()));
+        // input_names.push_back("data");
         std::cout << input_names[i] << std::endl;
         input_tensors.push_back(
             Ort::Value::CreateTensor<float>(
@@ -65,6 +70,22 @@ int main(int argc, char **argv)
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     std::string model_path = FLAGS_model_path;
     std::string image_path = FLAGS_image_path;
+    std::string shape = FLAGS_image_shape;
+    std::stringstream ss(shape);
+    int n, c, h, w;
+    char sep;
+    ss >> n >> sep >> c >> sep >> h >> sep >> w;
+
+    if (!ss.fail() && ss.eof())
+    {
+        std::cout << "n = " << n << ", c = " << c << ", h = " << h << ", w = " << w << std::endl;
+    }
+    else
+    {
+        std::cerr << "Invalid shape format: " << shape << std::endl;
+        return 1;
+    }
+
     Ort::Env env = Ort::Env{ORT_LOGGING_LEVEL_ERROR, "Default"};
     Ort::SessionOptions session_options;
     session_options.EnableProfiling("result_");
@@ -89,6 +110,7 @@ nnapi_flags |= NNAPI_FLAG_USE_FP16;
     cv::Mat image = cv::imread(image_path.c_str());
     // 图片从CV_8UC3 -> CV_32FC3
     image.convertTo(image, CV_32FC3, 1.0 / 255);
+    cv::resize(image, image, cv::Size(w, h));
     cv::normalize(image, image, 0, 1, cv::NORM_MINMAX);
     // std::cout << image.type() << std::endl;
     run(session, (float *)image.data, 3 * image.cols * image.rows);

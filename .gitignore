@@ -2,5 +2,8 @@
 builds/
 build/
 samples/
+models/
 .vscode/
 libs/
+scripts/*.json
+scripts/*.xlsx

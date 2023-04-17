@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.18)
 project (Benchmark)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 11)
 set(APP_NAME main)
 
 
@@ -53,8 +53,9 @@ set(OpenCVLib
 set(OrtLib
     onnxruntime)
 
-set(gflagsLib
-    gflags_nothreads)
+# set(gflagsLib
+#     gflags_nothreads)
+add_subdirectory("3rd-party/gflags")
 
 # 构建可执行文件
 add_executable(${APP_NAME} "src/onnxruntime_android.cpp")
@@ -64,5 +65,5 @@ target_link_libraries(
     ${APP_NAME} 
     ${OpenCVLib} 
     ${OrtLib}
-    ${gflagsLib}
+    gflags::gflags
 )
