@@ -1,4 +1,5 @@
 #include "core/session/onnxruntime_cxx_api.h"
+#include "core/session/onnxruntime_c_api.h"
 #ifdef ANDROID_PLATFORM
 #include "providers/nnapi/nnapi_provider_factory.h"
 #endif
@@ -12,8 +13,9 @@
 
 DEFINE_string(model_path, "", "*.onnx");
 DEFINE_string(image_path, "", "*.png/*.jpg");
-DEFINE_string(image_shape, "", "1x3x112x112");
-DEFINE_string(data_type, "", "float32");
+// DEFINE_string(image_shape, "", "1x3x112x112");
+// DEFINE_string(data_type, "", "float32");
+DEFINE_string(prefix, "", "result");
 DEFINE_bool(use_nnapi, false, "use nnapi");
 char *copy_string(char *src)
 {
@@ -22,7 +24,7 @@ char *copy_string(char *src)
     return dst;
 }
 
-int run(Ort::Session &session, float *image, size_t image_size)
+int run(Ort::Session &session)
 {
     std::vector<Ort::AllocatedStringPtr> ptrs;
     std::vector<Ort::Value> input_tensors;
@@ -35,7 +37,11 @@ int run(Ort::Session &session, float *image, size_t image_size)
     for (size_t i = 0; i < input_count; i++)
     {
         std::vector<int64_t> input_dim = session.GetInputTypeInfo(i).GetTensorTypeAndShapeInfo().GetShape();
+        int data_type = session.GetInputTypeInfo(i).GetTensorTypeAndShapeInfo().GetElementType();
+
+        session.GetInputTypeInfo(i).GetTensorTypeAndShapeInfo().GetElementType();
         std::cout << "input dim: ";
+        size_t size = 1;
         for (size_t j = 0; j < input_dim.size(); j++)
         {
             if (input_dim[j] == -1)
@@ -43,15 +49,39 @@ int run(Ort::Session &session, float *image, size_t image_size)
                 input_dim[j] = 1;
             }
             std::cout << input_dim[j] << " ";
+            size *= input_dim[j];
         }
+
         std::cout << std::endl;
         Ort::AllocatedStringPtr input_name = session.GetInputNameAllocated(i, allocator);
         input_names.push_back(copy_string(input_name.get()));
-        // input_names.push_back("data");
+
         std::cout << input_names[i] << std::endl;
-        input_tensors.push_back(
-            Ort::Value::CreateTensor<float>(
-                mem_info, image, image_size, input_dim.data(), input_dim.size()));
+        // 支持
+        switch (data_type)
+        {
+        case 1:
+            float *float32_data = (float *)malloc(sizeof(float) * size);
+            input_tensors.push_back(
+                Ort::Value::CreateTensor<float>(
+                    mem_info, float32_data, size, input_dim.data(), input_dim.size()));
+            break;
+        case 3:
+            int8_t *int8_data = (int8_t *)malloc(sizeof(int8_t) * size);
+            input_tensors.push_back(
+                Ort::Value::CreateTensor<int8_t>(
+                    mem_info, int8_data, size, input_dim.data(), input_dim.size()));
+            break;
+        case 2:
+            uint8_t *uint8_data = (uint8_t *)malloc(sizeof(uint8_t) * size);
+            input_tensors.push_back(
+                Ort::Value::CreateTensor<uint8_t>(
+                    mem_info, uint8_data, size, input_dim.data(), input_dim.size()));
+            break;
+
+        default:
+            break;
+        }
     }
 
     for (size_t i = 0; i < output_count; i++)
@@ -70,30 +100,32 @@ int main(int argc, char **argv)
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     std::string model_path = FLAGS_model_path;
     std::string image_path = FLAGS_image_path;
-    std::string shape = FLAGS_image_shape;
-    std::stringstream ss(shape);
-    int n, c, h, w;
-    char sep;
-    ss >> n >> sep >> c >> sep >> h >> sep >> w;
+    std::string result_prefix = FLAGS_prefix;
+    // std::string shape = FLAGS_image_shape;
+    // std::stringstream ss(shape);
+    // int n, c, h, w;
+    // char sep;
+    // ss >> n >> sep >> c >> sep >> h >> sep >> w;
 
-    if (!ss.fail() && ss.eof())
-    {
-        std::cout << "n = " << n << ", c = " << c << ", h = " << h << ", w = " << w << std::endl;
-    }
-    else
-    {
-        std::cerr << "Invalid shape format: " << shape << std::endl;
-        return 1;
-    }
+    // if (!ss.fail() && ss.eof())
+    // {
+    //     std::cout << "n = " << n << ", c = " << c << ", h = " << h << ", w = " << w << std::endl;
+    // }
+    // else
+    // {
+    //     std::cerr << "Invalid shape format: " << shape << std::endl;
+    //     return 1;
+    // }
 
     Ort::Env env = Ort::Env{ORT_LOGGING_LEVEL_ERROR, "Default"};
     Ort::SessionOptions session_options;
-    session_options.EnableProfiling("result_");
+    session_options.EnableProfiling(result_prefix.c_str());
     // 注册NNApi
     if (FLAGS_use_nnapi)
     {
 
-/*这里可以设置文档地址(https://onnxruntime.ai/docs/execution-providers/NNAPI-ExecutionProvider.html)，例如下:
+/*
+这里可以设置文档地址(https://onnxruntime.ai/docs/execution-providers/NNAPI-ExecutionProvider.html)，例如下:
 nnapi_flags |= NNAPI_FLAG_USE_FP16;
 */
 #ifdef ANDROID_PLATFORM
@@ -107,12 +139,12 @@ nnapi_flags |= NNAPI_FLAG_USE_FP16;
 
     Ort::Session session{env, model_path.c_str(), session_options}; // CPU
 
-    cv::Mat image = cv::imread(image_path.c_str());
-    // 图片从CV_8UC3 -> CV_32FC3
-    image.convertTo(image, CV_32FC3, 1.0 / 255);
-    cv::resize(image, image, cv::Size(w, h));
-    cv::normalize(image, image, 0, 1, cv::NORM_MINMAX);
+    // cv::Mat image = cv::imread(image_path.c_str());
+    // // 图片从CV_8UC3 -> CV_32FC3
+    // image.convertTo(image, CV_32FC3, 1.0 / 255);
+    // cv::resize(image, image, cv::Size(w, h));
+    // cv::normalize(image, image, 0, 1, cv::NORM_MINMAX);
     // std::cout << image.type() << std::endl;
-    run(session, (float *)image.data, 3 * image.cols * image.rows);
+    run(session);
     return 0;
 }
