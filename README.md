@@ -41,6 +41,8 @@ cmake --build . --target main
 git submodule add https://github.com/gflags/gflags.git 3rd-party/gflags
 git submodule add https://github.com/opencv/opencv.git 3rd-party/opencv
 git submodule add https://github.com/microsoft/onnxruntime.git 3rd-party/onnxruntime
+# 确认子模块
+git submodule update --init --recursive
 ```
 
 ## TODO
