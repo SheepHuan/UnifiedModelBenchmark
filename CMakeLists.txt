@@ -31,6 +31,9 @@ elseif(TARGET_OS STREQUAL "android")
         "${CMAKE_SOURCE_DIR}/libs/opencv/android/arm64-v8a/4.7.0"
         "${CMAKE_SOURCE_DIR}/libs/gflags/android/arm64-v8a")
 endif()
+
+
+
 # 声明共享库
 set(OpenCVLib
     opencv_dnn

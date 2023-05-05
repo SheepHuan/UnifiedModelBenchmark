@@ -1,14 +1,7 @@
 # Benchmark
 
-```bash
-./main --model_path="/workspace/UnifiedModelBenchmark/samples/yolov4.onnx" --image_path="/workspace/UnifiedModelBenchmark/samples/dog.jpg"
-
-
-./main --model_path="/root/workspace/UnifiedModelBenchmark/models/yolov4.onnx" --image_shape="1x3x416x416" --image_path="/root/workspace/UnifiedModelBenchmark/samples/dog.jpg"
-```
-
 ## 编译指令
-
+### Linux
 ```bash
 # linux
 cd build
@@ -19,6 +12,22 @@ cmake --build . --target main
 cmake -DTARGET_OS:STRING="android" -DCMAKE_TOOLCHAIN_FILE="/root/android_sdk/ndk/25.0.8775105/build/cmake/android.toolchain.cmake" -DANDROID_ABI="arm64-v8a" -DANDROID_PLATFORM=android-29 -G "Ninja" ..
 cmake --build . --target main
 ```
+### Android
+
+
+### Windows
+
+
+## 运行demo
+
+```bash
+./main --model_path="/workspace/UnifiedModelBenchmark/samples/yolov4.onnx" --image_path="/workspace/UnifiedModelBenchmark/samples/dog.jpg"
+
+
+./main --model_path="/root/workspace/UnifiedModelBenchmark/models/yolov4.onnx" --image_shape="1x3x416x416" --image_path="/root/workspace/UnifiedModelBenchmark/samples/dog.jpg"
+```
+
+
 
 ## 代码依赖库
 
