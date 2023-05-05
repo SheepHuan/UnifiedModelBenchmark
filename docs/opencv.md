@@ -109,3 +109,17 @@ make install
     -DBUILD_opencv_world=off \
     -DBUILD_opencv_lengcy=off \
     -DBUILD_opencv_lengcy=off \
+    -DWITH_1394=off \
+    -DWITH_EIGEN=off \
+    -DWITH_FFMPEG=off \
+    -DWITH_GIGEAPI=off \
+    -DWITH_GSTREAMER=off \
+    -DWITH_GTK=off \
+    -DWITH_PVAPI=off \
+    -DWITH_V4L=off \
+    -DWITH_LIBV4L=off \
+    -DWITH_CUDA=off \
+    -DWITH_CUFFT=off \
+    -DWITH_OPENCL=off \
+    -DWITH_OPENCLAMDBLAS=off \
+    -DWITH_OPENCLAMDFFT=off \

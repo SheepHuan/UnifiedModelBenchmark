@@ -12,8 +12,8 @@ SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 # 导入头文件
 include_directories(
     "${CMAKE_SOURCE_DIR}/include"
-    "${CMAKE_SOURCE_DIR}/include/opencv"
-    "${CMAKE_SOURCE_DIR}/include/opencv/opencv2"
+    "${CMAKE_SOURCE_DIR}/3rd-party/opencv/install/include/opencv4/"
+    "${CMAKE_SOURCE_DIR}/3rd-party/opencv/install/include/opencv4/opencv2"
     "${CMAKE_SOURCE_DIR}/include/onnxruntime"
     "${CMAKE_SOURCE_DIR}/include/onnxruntime/core"
     "${CMAKE_SOURCE_DIR}/include/onnxruntime/core/session"
@@ -22,8 +22,7 @@ include_directories(
 if (TARGET_OS STREQUAL "linux")
     link_directories(
         "${CMAKE_SOURCE_DIR}/libs/onnxruntime/linux/amd64"
-        "${CMAKE_SOURCE_DIR}/libs/opencv/linux/amd64"
-        "${CMAKE_SOURCE_DIR}/libs/gflags/linux/amd64")
+        "${CMAKE_SOURCE_DIR}/3rd-party/opencv/install/lib")
 elseif(TARGET_OS STREQUAL "android")
     add_definitions(-DANDROID_PLATFORM)
     link_directories(
@@ -39,18 +38,11 @@ set(OpenCVLib
     opencv_dnn
     opencv_videoio
     opencv_imgcodecs
-    opencv_photo
     opencv_video
     opencv_core
-    opencv_flann
     opencv_gapi
-    opencv_ml
-    opencv_stitching
     opencv_highgui
-    opencv_calib3d
     opencv_imgproc
-    opencv_features2d
-    opencv_objdetect
 )
 
 set(OrtLib
