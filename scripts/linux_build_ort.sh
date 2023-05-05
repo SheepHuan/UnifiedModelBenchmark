@@ -9,4 +9,4 @@ ORT_SOURCE_DIR="$ROOT_DIR/3rd-party/onnxruntime"
 # mkdir -p $ORT_INSTALL_DIR
 cd  $ORT_SOURCE_DIR
 chmod +x build.sh
-./build.sh --config RelWithDebInfo --build_shared_lib --parallel --cmake_generator Ninja 
+./build.sh --allow_running_as_root --config RelWithDebInfo --build_shared_lib --parallel --cmake_generator  Ninja 
