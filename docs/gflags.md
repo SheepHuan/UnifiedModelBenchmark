@@ -20,7 +20,6 @@ make
 
 ```bash
 git submodule add <子项目的仓库地址> <本地目录>
-git submodule add https://github.com/gflags/gflags.git 3rd-party/gflags
-git submodule add https://github.com/opencv/opencv.git 3rd-party/opencv
+
 
 ```

@@ -77,3 +77,35 @@ cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake \
 make -j8
 make install
 ```
+    -DBUILD_DOCS=off \
+	-DBUILD_SHARED_LIBS=off \
+    -DBUILD_FAT_JAVA_LIB=off \
+    -DBUILD_TESTS=off \
+    -DBUILD_TIFF=on \         
+    -DBUILD_JASPER=on \        
+    -DBUILD_JPEG=on \      
+    -DBUILD_PNG=on \          
+    -DBUILD_ZLIB=on \
+    -DBUILD_OPENEXR=off \
+    -DBUILD_opencv_apps=off \
+    -DBUILD_opencv_calib3d=off \
+    -DBUILD_opencv_contrib=off \
+    -DBUILD_opencv_features2d=off \
+    -DBUILD_opencv_flann=off \
+    -DBUILD_opencv_gpu=off \
+    -DBUILD_opencv_java=off \
+    -DBUILD_opencv_legacy=off \
+    -DBUILD_opencv_ml=off \
+    -DBUILD_opencv_nonfree=off \
+    -DBUILD_opencv_objdetect=off \
+    -DBUILD_opencv_ocl=off \
+    -DBUILD_opencv_photo=off \
+    -DBUILD_opencv_python=off \
+    -DBUILD_opencv_stitching=off \
+    -DBUILD_opencv_superres=off \
+    -DBUILD_opencv_ts=off \
+    -DBUILD_opencv_video=off \
+    -DBUILD_opencv_videostab=off \
+    -DBUILD_opencv_world=off \
+    -DBUILD_opencv_lengcy=off \
+    -DBUILD_opencv_lengcy=off \

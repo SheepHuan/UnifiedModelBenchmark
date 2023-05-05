@@ -1,7 +1,5 @@
 # Benchmark
 
-## 编译指令
-### Linux
 ```bash
 # linux
 cd build
@@ -12,6 +10,11 @@ cmake --build . --target main
 cmake -DTARGET_OS:STRING="android" -DCMAKE_TOOLCHAIN_FILE="/root/android_sdk/ndk/25.0.8775105/build/cmake/android.toolchain.cmake" -DANDROID_ABI="arm64-v8a" -DANDROID_PLATFORM=android-29 -G "Ninja" ..
 cmake --build . --target main
 ```
+
+
+## 编译指令
+### Linux
+
 ### Android
 
 
@@ -31,21 +34,22 @@ cmake --build . --target main
 
 ## 代码依赖库
 
-1. onnxruntime@v1.14.1
-2. opencv@v4.7.0
+1. [onnxruntime@v1.14.1](https://github.com/microsoft/onnxruntime.git)
+2. [opencv@v4.7.0](https://github.com/opencv/opencv.git )
 3. [gflags@2.2.2](https://github.com/gflags/gflags)
+```bash
+git submodule add https://github.com/gflags/gflags.git 3rd-party/gflags
+git submodule add https://github.com/opencv/opencv.git 3rd-party/opencv
+git submodule add https://github.com/microsoft/onnxruntime.git 3rd-party/onnxruntime
+```
 
 ## TODO
+1. 学会如何将opencv作为子模块加入本项目,简化编译流程
+2. 支持onnxruntime android端推理
+3. 支持tensorflow lite android端推理
+3. 支持paddle lite android端推理
+ 
 
-### onnxruntime
-
-0. ~~添加 arm android cpu,nnapi 支持~~
-1. 添加 intel openvino cpu,gpu,vpu 支持
-2. 添加 瑞芯微 npu 支持
-
-### paddlitelite
-
-### tensorflowlite
 
 ## 参考文章
 

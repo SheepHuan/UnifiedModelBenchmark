@@ -58,6 +58,8 @@ set(OrtLib
 
 # set(gflagsLib
 #     gflags_nothreads)
+
+add_subdirectory("3rd-party/opencv")
 add_subdirectory("3rd-party/gflags")
 
 # 构建可执行文件
