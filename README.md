@@ -44,10 +44,10 @@ git submodule add https://github.com/microsoft/onnxruntime.git 3rd-party/onnxrun
 ```
 
 ## TODO
-1. 学会如何将opencv作为子模块加入本项目,简化编译流程
+1. 学会如何将opencv作为子模块加入本项目,简化编译流程(blog记录)
 2. 支持onnxruntime android端推理
 3. 支持tensorflow lite android端推理
-3. 支持paddle lite android端推理
+4. 支持paddle lite android端推理
  
 
 
