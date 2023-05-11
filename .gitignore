@@ -7,4 +7,5 @@ models/
 libs/
 scripts/*.json
 scripts/*.xlsx
-models.zip
+tmp/
+

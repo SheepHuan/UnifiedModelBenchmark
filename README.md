@@ -1,22 +1,24 @@
 # Benchmark
 
-```bash
-# linux
-cd build
-cmake -DTARGET_OS:STRING="linux" ..
-cmake --build . --target main
-
-# linux 交叉编译 android 可执行文件
-cmake -DTARGET_OS:STRING="android" -DCMAKE_TOOLCHAIN_FILE="/root/android_sdk/ndk/25.0.8775105/build/cmake/android.toolchain.cmake" -DANDROID_ABI="arm64-v8a" -DANDROID_PLATFORM=android-29 -G "Ninja" ..
-cmake --build . --target main
-```
 
 
 ## 编译指令
 ### Linux
+```bash
+# linux
+cd build
+cmake -DTARGET_OS:STRING="linux" ..
+cmake --build . --target main 
+./main --model_path="/root/workspace/UnifiedModelBenchmark/tmp/conv2d/conv2d_256_13_7_1_1.onnx" --prefix="1"
+
+```
 
 ### Android
-
+```bash
+# linux 交叉编译 android 可执行文件
+cmake -DTARGET_OS:STRING="android" -DCMAKE_TOOLCHAIN_FILE="/root/android_sdk/ndk/25.0.8775105/build/cmake/android.toolchain.cmake" -DANDROID_ABI="arm64-v8a" -DANDROID_PLATFORM=android-29 -G "Ninja" ..
+cmake --build . --target main
+```
 
 ### Windows
 
@@ -24,7 +26,21 @@ cmake --build . --target main
 ## 运行demo
 
 ```bash
+adb push tmp/conv2d /mnt/sdcard/ort_models
+adb push --sync libs /data/local/tmp/hcp/
+adb push --sync 3rd-party/opencv/install/sdk/native/libs/arm64-v8a /data/local/tmp/hcp/
+adb push --sync libs/onnxruntime/android/arm64-v8a /data/local/tmp/hcp/
+adb push --sync libs/gflags/android/arm64-v8a /data/local/tmp/hcp/
+adb push build/main /data/local/tmp/hcp/main
+chmod +x /data/local/tmp/main
+
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/arm64-v8a"
+./main --model_path="conv2d_256_13_7_1_1.onnx" --prefix="1"
+
+
+
 ./main --model_path="/workspace/UnifiedModelBenchmark/samples/yolov4.onnx" --image_path="/workspace/UnifiedModelBenchmark/samples/dog.jpg"
+
 
 
 ./main --model_path="/root/workspace/UnifiedModelBenchmark/models/yolov4.onnx" --image_shape="1x3x416x416" --image_path="/root/workspace/UnifiedModelBenchmark/samples/dog.jpg"
