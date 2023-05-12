@@ -27,6 +27,9 @@ cmake --build . --target main
 
 ```bash
 adb push tmp/conv2d /mnt/sdcard/ort_models
+
+adb push /root/workspace/UnifiedHardwareBenchmark/python/workspace/matmul /mnt/sdcard/ort_models
+
 adb push --sync libs /data/local/tmp/hcp/
 adb push --sync 3rd-party/opencv/install/sdk/native/libs/arm64-v8a /data/local/tmp/hcp/
 adb push --sync libs/onnxruntime/android/arm64-v8a /data/local/tmp/hcp/
@@ -35,7 +38,7 @@ adb push build/main /data/local/tmp/hcp/main
 chmod +x /data/local/tmp/main
 
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/arm64-v8a"
-./main --model_path="conv2d_256_13_7_1_1.onnx" --prefix="1"
+./main --model_path="conv2d_256_13_7_1_1.onnx" --prefix="conv2d_256_13_7_1_1"
 
 
 

@@ -27,8 +27,8 @@ int run(Ort::Session &session)
 {
     std::vector<Ort::AllocatedStringPtr> ptrs;
     std::vector<Ort::Value> input_tensors;
-    std::vector<const char *> input_names = {"conv_input.0"};
-    std::vector<const char *> output_names{"conv_output.0"};
+    std::vector<const char *> input_names = {"matmul_input_a.0","matmul_input_b.0"};
+    std::vector<const char *> output_names{"matmul_output_c.0"};
     Ort::AllocatorWithDefaultOptions allocator;
     size_t input_count = session.GetInputCount();
     size_t output_count = session.GetOutputCount();
@@ -50,13 +50,7 @@ int run(Ort::Session &session)
             std::cout << input_dim[j] << " ";
             size *= input_dim[j];
         }
-        // Ort::AllocatedStringPtr input_name = session.GetInputName(i, allocator);
-        // char *name = copy_string(input_name.get());
-        // name[strlen(name)-2]='\0';
-        // input_names.push_back(name);
-
-        std::cout << input_names[i];
-        // 支持
+        std::cout<<std::endl;
 
         float *float32_data = (float *)malloc(sizeof(float) * size);
         input_tensors.push_back(
