@@ -15,28 +15,28 @@ if (TARGET_OS STREQUAL "linux")
     # 导入头文件
     include_directories(
         "${CMAKE_SOURCE_DIR}/include"
-        # "${CMAKE_SOURCE_DIR}/3rd-party/opencv/install/include/opencv4/"
-        # "${CMAKE_SOURCE_DIR}/3rd-party/opencv/install/include/opencv4/opencv2"
-        "${CMAKE_SOURCE_DIR}/include/onnxruntime"
-        "${CMAKE_SOURCE_DIR}/include/onnxruntime/core"
-        "${CMAKE_SOURCE_DIR}/include/onnxruntime/core/session"
+        # "${CMAKE_SOURCE_DIR}/3rd-party/opencv/build/install/include/opencv4"
+        # "${CMAKE_SOURCE_DIR}/3rd-party/opencv/build/install/include/opencv4/opencv2"
+        "${CMAKE_SOURCE_DIR}/3rd-party/onnxruntime/include/onnxruntime"
+        "${CMAKE_SOURCE_DIR}/3rd-party/onnxruntime/include/onnxruntime/core"
+        "${CMAKE_SOURCE_DIR}/3rd-party/onnxruntime/include/onnxruntime/core/session"
     )
     link_directories(
-        "${CMAKE_SOURCE_DIR}/libs/onnxruntime/linux/amd64"
+        "${CMAKE_SOURCE_DIR}/3rd-party/onnxruntime/build/Linux/RelWithDebInfo"
         "${CMAKE_SOURCE_DIR}/3rd-party/opencv/install/lib")
 elseif(TARGET_OS STREQUAL "android")
     add_definitions(-DANDROID_PLATFORM)
     include_directories(
     "${CMAKE_SOURCE_DIR}/include"
-    "${CMAKE_SOURCE_DIR}/3rd-party/opencv/install/sdk/native/jni/include"
-    "${CMAKE_SOURCE_DIR}/3rd-party/opencv/install/sdk/native/jni/include/opencv2"
+    # "${CMAKE_SOURCE_DIR}/3rd-party/opencv/install/sdk/native/jni/include"
+    # "${CMAKE_SOURCE_DIR}/3rd-party/opencv/install/sdk/native/jni/include/opencv2"
     "${CMAKE_SOURCE_DIR}/include/onnxruntime"
     "${CMAKE_SOURCE_DIR}/include/onnxruntime/core"
     "${CMAKE_SOURCE_DIR}/include/onnxruntime/core/session"
     )
     link_directories(
         "${CMAKE_SOURCE_DIR}/libs/onnxruntime/android/arm64-v8a"
-        "${CMAKE_SOURCE_DIR}/3rd-party/opencv/install/sdk/native/libs/arm64-v8a"
+        # "${CMAKE_SOURCE_DIR}/3rd-party/opencv/install/sdk/native/libs/arm64-v8a"
         "${CMAKE_SOURCE_DIR}/libs/gflags/android/arm64-v8a")
 endif()
 

@@ -10,7 +10,8 @@ cd build
 cmake -DTARGET_OS:STRING="linux" ..
 cmake --build . --target main 
 ./main --model_path="/root/workspace/UnifiedModelBenchmark/tmp/conv2d/conv2d_256_13_7_1_1.onnx" --prefix="1"
-
+./main --model_path="/root/workspace/UnifiedModelBenchmark/models/squeezenet1.0-12-int8.onnx" --prefix="1"
+./main --model_path="/root/workspace/UnifiedModelBenchmark/models/FasterRCNN-12.onnx" --prefix="1"
 ```
 
 ### Android

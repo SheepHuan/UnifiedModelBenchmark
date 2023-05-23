@@ -9,7 +9,7 @@ git checkout v1.14.1
 ## Build for Linux [doc](https://onnxruntime.ai/docs/build/inferencing.html)
 ```bash
 export https_proxy="http://172.16.101.68:7890"
-# 默认编译amd64的CPU
+# 默认编译amd64的CPU onnx version 1.12.0
 ./build.sh --config RelWithDebInfo --build_shared_lib --parallel --cmake_generator Ninja 
 ```
 

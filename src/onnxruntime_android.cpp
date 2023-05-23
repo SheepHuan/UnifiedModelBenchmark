@@ -3,7 +3,7 @@
 #ifdef ANDROID_PLATFORM
 #include "providers/nnapi/nnapi_provider_factory.h"
 #endif
-// #include "opencv2/opencv.hpp"
+#include <chrono>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -12,32 +12,27 @@
 #include <gflags/gflags.h>
 
 DEFINE_string(model_path, "", "*.onnx");
-// DEFINE_string(image_path, "", "*.png/*.jpg");
 DEFINE_string(prefix, "", "result");
-DEFINE_int32(round, 10, "round");
+DEFINE_int32(warmup_rounds, 3, "warmup_rounds");
+DEFINE_int32(run_rounds, 10, "run_rounds");
 DEFINE_bool(use_nnapi, false, "use nnapi");
-char *copy_string(char *src)
-{
-    char *dst = (char *)malloc(sizeof(char) * strlen(src));
-    memcpy(dst, src, sizeof(char) * strlen(src));
-    return dst;
-}
 
 int run(Ort::Session &session)
 {
     std::vector<Ort::AllocatedStringPtr> ptrs;
     std::vector<Ort::Value> input_tensors;
-    std::vector<const char *> input_names = {"matmul_input_a.0","matmul_input_b.0"};
-    std::vector<const char *> output_names{"matmul_output_c.0"};
-    Ort::AllocatorWithDefaultOptions allocator;
+    std::vector<std::string> input_names;
+    std::vector<std::string> output_names;
+
     size_t input_count = session.GetInputCount();
     size_t output_count = session.GetOutputCount();
     auto mem_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
+    Ort::AllocatorWithDefaultOptions allocator;
     for (size_t i = 0; i < input_count; i++)
     {
+        // Ort::AllocatorWithDefaultOptions allocator;
         std::vector<int64_t> input_dim = session.GetInputTypeInfo(i).GetTensorTypeAndShapeInfo().GetShape();
         int data_type = session.GetInputTypeInfo(i).GetTensorTypeAndShapeInfo().GetElementType();
-
         session.GetInputTypeInfo(i).GetTensorTypeAndShapeInfo().GetElementType();
         std::cout << "input dim: ";
         size_t size = 1;
@@ -50,7 +45,14 @@ int run(Ort::Session &session)
             std::cout << input_dim[j] << " ";
             size *= input_dim[j];
         }
-        std::cout<<std::endl;
+        std::cout << std::endl;
+
+        // 获取输入
+        Ort::AllocatedStringPtr input_name_ptr = session.GetInputNameAllocated(i, allocator);
+        std::string input_name = std::string(input_name_ptr.get());
+        input_names.push_back(input_name);
+
+        std::cout << "input_name: " << input_names[i] << std::endl;
 
         float *float32_data = (float *)malloc(sizeof(float) * size);
         input_tensors.push_back(
@@ -58,18 +60,58 @@ int run(Ort::Session &session)
                 mem_info, float32_data, size, input_dim.data(), input_dim.size()));
     }
 
-    // for (size_t i = 0; i < output_count; i++)
-    // {
-    //     Ort::AllocatedStringPtr output_name = session.GetOutputNameAllocated(i, allocator);
-    //     output_names.push_back(copy_string(output_name.get()));
-    //     std::cout << output_names[i] << std::endl;
-    // }
-    int all_round = FLAGS_round;
-    for (int i = 0; i < all_round; i++)
+    for (size_t i = 0; i < output_count; i++)
     {
-        auto output_tensors = session.Run(Ort::RunOptions{nullptr}, input_names.data(), input_tensors.data(), input_count, output_names.data(), output_count);
+        Ort::AllocatedStringPtr output_name_ptr = session.GetOutputNameAllocated(i, allocator);
+        std::string output_name = std::string(output_name_ptr.get());
+        output_names.push_back(output_name);
+
+        std::cout << "output_name: " << output_names[i] << std::endl;
     }
 
+    int warmup_rounds = FLAGS_warmup_rounds;
+    int run_rounds = FLAGS_run_rounds;
+    double warmup_time = 0;
+
+    for (int i = 0; i < warmup_rounds; i++)
+    {
+        std::vector<const char *> input_names_ptr;
+        std::vector<const char *> output_names_ptr;
+
+        for (size_t i = 0; i < input_count; i++)
+        {
+            input_names_ptr.push_back(input_names[i].c_str());
+        }
+        for (size_t i = 0; i < output_count; i++)
+        {
+            output_names_ptr.push_back(output_names[i].c_str());
+        }
+        std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+        auto output_tensors = session.Run(Ort::RunOptions{nullptr}, input_names_ptr.data(), input_tensors.data(), input_count, output_names_ptr.data(), output_count);
+        std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+        auto time_span = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+        warmup_time = warmup_time + time_span.count();
+    }
+    double run_time = 0;
+    for (int i = 0; i < run_rounds; i++)
+    {
+        std::vector<const char *> input_names_ptr;
+        std::vector<const char *> output_names_ptr;
+        for (size_t i = 0; i < input_count; i++)
+        {
+            input_names_ptr.push_back(input_names[i].c_str());
+        }
+        for (size_t i = 0; i < output_count; i++)
+        {
+            output_names_ptr.push_back(output_names[i].c_str());
+        }
+        std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+        auto output_tensors = session.Run(Ort::RunOptions{nullptr}, input_names_ptr.data(), input_tensors.data(), input_count, output_names_ptr.data(), output_count);
+        std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+        auto time_span = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+        run_time = run_time + time_span.count();
+    }
+    printf("warmup: %d rounds, avg time: %f ms\nrun: %d rounds, avg time: %f ms\n",warmup_rounds,warmup_time*1.0/warmup_rounds,run_rounds,run_time*1.0/run_rounds);
     return 0;
 }
 
