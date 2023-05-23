@@ -9,9 +9,10 @@
 cd build
 cmake -DTARGET_OS:STRING="linux" ..
 cmake --build . --target main 
-./main --model_path="/root/workspace/UnifiedModelBenchmark/tmp/conv2d/conv2d_256_13_7_1_1.onnx" --prefix="1"
+
 ./main --model_path="/root/workspace/UnifiedModelBenchmark/models/squeezenet1.0-12-int8.onnx" --prefix="1"
 ./main --model_path="/root/workspace/UnifiedModelBenchmark/models/FasterRCNN-12.onnx" --prefix="1"
+./main --model_path="/root/workspace/UnifiedModelBenchmark/models/ssd-12.onnx" --prefix="1"
 ```
 
 ### Android
@@ -27,19 +28,24 @@ cmake --build . --target main
 ## 运行demo
 
 ```bash
-adb push tmp/conv2d /mnt/sdcard/ort_models
+# adb push tmp/conv2d /mnt/sdcard/ort_models
 
-adb push /root/workspace/UnifiedHardwareBenchmark/python/workspace/matmul /mnt/sdcard/ort_models
+# adb push /root/workspace/UnifiedHardwareBenchmark/python/workspace/matmul /mnt/sdcard/ort_models
 
-adb push --sync libs /data/local/tmp/hcp/
-adb push --sync 3rd-party/opencv/install/sdk/native/libs/arm64-v8a /data/local/tmp/hcp/
-adb push --sync libs/onnxruntime/android/arm64-v8a /data/local/tmp/hcp/
-adb push --sync libs/gflags/android/arm64-v8a /data/local/tmp/hcp/
+# adb push --sync libs /data/local/tmp/hcp/
+# adb push --sync 3rd-party/opencv/install/sdk/native/libs/arm64-v8a /data/local/tmp/hcp/
+# adb push --sync libs/onnxruntime/android/arm64-v8a /data/local/tmp/hcp/
+# adb push --sync libs/gflags/android/arm64-v8a /data/local/tmp/hcp/
+
+# 
+adb push 3rd-party/onnxruntime/build/Android/Debug/*.so /data/local/tmp/hcp/libs
+adb push 3rd-party/onnxruntime/build/Android/Debug/*.a /data/local/tmp/hcp/libs
+adb push models/FasterRCNN-12.onnx /mnt/sdcard/ort_models
 adb push build/main /data/local/tmp/hcp/main
-chmod +x /data/local/tmp/main
+adb shell "chmod +x /data/local/tmp/hcp/main"
 
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/arm64-v8a"
-./main --model_path="conv2d_256_13_7_1_1.onnx" --prefix="conv2d_256_13_7_1_1"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs"
+./main --model_path="/mnt/sdcard/ort_models/FasterRCNN-12.onnx" --prefix="1"
 
 
 

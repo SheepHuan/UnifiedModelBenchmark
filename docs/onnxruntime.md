@@ -3,7 +3,7 @@
 ```bash
 git clone --recursive https://github.com/microsoft/onnxruntime.git
 apt install libssl-dev build-essential
-git checkout v1.14.1
+git checkout v1.13.1
 ```
 
 ## Build for Linux [doc](https://onnxruntime.ai/docs/build/inferencing.html)
@@ -51,6 +51,6 @@ sdkmanager --install "ndk;25.0.8775105"
 ```bash
 export https_proxy="http://172.16.101.68:7890"
 export http_proxy="http://172.16.101.68:7890"
-./build.sh --android --android_sdk_path /root/android_sdk --android_ndk_path /root/android_sdk/ndk/25.0.8775105 --use_nnapi --build_shared_lib --android_abi arm64-v8a --android_api 29 --cmake_generator Ninja 
+./build.sh --config Release --android --android_sdk_path /root/android_sdk --android_ndk_path /root/android_sdk/ndk/25.0.8775105 --use_nnapi --build_shared_lib --android_abi arm64-v8a --android_api 29 --cmake_generator Ninja 
 # 编译完成后取出libonnxruntime.so
 ```
