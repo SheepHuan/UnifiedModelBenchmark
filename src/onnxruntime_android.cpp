@@ -11,11 +11,13 @@
 #include "mutils/log.hpp"
 #include <gflags/gflags.h>
 
-DEFINE_string(model_path, "", "*.onnx");
+DEFINE_string(graph, "", "onnx model path");
+DEFINE_int32(warmup_runs, 3, "warmup_runs");
+DEFINE_int32(num_runs, 10, "num_runs");
+DEFINE_int32(num_threads, 3, "num_threads");
+// DEFINE_bool(use_nnapi, false, "use nnapi");
+DEFINE_bool(enable_op_profiling, false, "enable_op_profiling");
 DEFINE_string(prefix, "", "result");
-DEFINE_int32(warmup_rounds, 3, "warmup_rounds");
-DEFINE_int32(run_rounds, 10, "run_rounds");
-DEFINE_bool(use_nnapi, false, "use nnapi");
 
 int run(Ort::Session &session)
 {
@@ -30,7 +32,6 @@ int run(Ort::Session &session)
     Ort::AllocatorWithDefaultOptions allocator;
     for (size_t i = 0; i < input_count; i++)
     {
-        // Ort::AllocatorWithDefaultOptions allocator;
         std::vector<int64_t> input_dim = session.GetInputTypeInfo(i).GetTensorTypeAndShapeInfo().GetShape();
         int data_type = session.GetInputTypeInfo(i).GetTensorTypeAndShapeInfo().GetElementType();
         session.GetInputTypeInfo(i).GetTensorTypeAndShapeInfo().GetElementType();
@@ -69,8 +70,8 @@ int run(Ort::Session &session)
         std::cout << "output_name: " << output_names[i] << std::endl;
     }
 
-    int warmup_rounds = FLAGS_warmup_rounds;
-    int run_rounds = FLAGS_run_rounds;
+    int warmup_rounds = FLAGS_warmup_runs;
+    int run_rounds = FLAGS_num_runs;
     double warmup_time = 0;
 
     for (int i = 0; i < warmup_rounds; i++)
@@ -119,13 +120,13 @@ int main(int argc, char **argv)
 {
     // 解析命令行参数
     gflags::ParseCommandLineFlags(&argc, &argv, true);
-    std::string model_path = FLAGS_model_path;
-    // std::string image_path = FLAGS_image_path;
+    std::string model_path = FLAGS_graph;
+    bool enable_op_profiling = FLAGS_enable_op_profiling;
     std::string result_prefix = FLAGS_prefix;
-    // std::cout<< model_path << "," << result_prefix << std::endl;
     Ort::Env env = Ort::Env{ORT_LOGGING_LEVEL_ERROR, "Default"};
     Ort::SessionOptions session_options;
-    session_options.EnableProfiling(result_prefix.c_str());
+    if (enable_op_profiling)
+        session_options.EnableProfiling(result_prefix.c_str());
     // 注册NNApi
     //     if (FLAGS_use_nnapi)
     //     {

@@ -45,15 +45,9 @@ adb push build/main /data/local/tmp/hcp/main
 adb shell "chmod +x /data/local/tmp/hcp/main"
 
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs"
-./main --model_path="/mnt/sdcard/ort_models/FasterRCNN-12.onnx" --prefix="1"
+./main --graph="/mnt/sdcard/ort_models/FasterRCNN-12.onnx" --warmup_runs 3 --num_runs 10
 
 
-
-./main --model_path="/workspace/UnifiedModelBenchmark/samples/yolov4.onnx" --image_path="/workspace/UnifiedModelBenchmark/samples/dog.jpg"
-
-
-
-./main --model_path="/root/workspace/UnifiedModelBenchmark/models/yolov4.onnx" --image_shape="1x3x416x416" --image_path="/root/workspace/UnifiedModelBenchmark/samples/dog.jpg"
 ```
 
 
