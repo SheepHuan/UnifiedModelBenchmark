@@ -45,7 +45,7 @@ adb push build/main /data/local/tmp/hcp/main
 adb shell "chmod +x /data/local/tmp/hcp/main"
 
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs"
-./main --graph="/mnt/sdcard/ort_models/FasterRCNN-12.onnx" --warmup_runs 3 --num_runs 10
+/data/local/tmp/hcp/main --graph="/mnt/sdcard/ort_models/FasterRCNN-12.onnx" --warmup_runs 3 --num_runs 10
 
 
 ```

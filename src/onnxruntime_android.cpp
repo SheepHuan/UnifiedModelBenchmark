@@ -8,9 +8,10 @@
 #include <sstream>
 #include <string>
 #include <cstdio>
+#include <vector>
 #include "mutils/log.hpp"
 #include <gflags/gflags.h>
-
+#include <cmath>
 DEFINE_string(graph, "", "onnx model path");
 DEFINE_int32(warmup_runs, 3, "warmup_runs");
 DEFINE_int32(num_runs, 10, "num_runs");
@@ -18,6 +19,23 @@ DEFINE_int32(num_threads, 3, "num_threads");
 // DEFINE_bool(use_nnapi, false, "use nnapi");
 DEFINE_bool(enable_op_profiling, false, "enable_op_profiling");
 DEFINE_string(prefix, "", "result");
+
+void calc_std_deviation(std::vector<double> arr, int size,double& latency_avg ,double& latency_std) {
+    double sum = 0.0, mean, stddev = 0.0;
+    // double min_val,max_val;
+    for(int i=0; i<size; ++i) {
+        sum += arr[i];
+    }
+
+    mean = sum/size;
+
+    for(int i=0; i<size; ++i) {
+        stddev += pow(arr[i] - mean, 2);
+    }
+    latency_avg = mean;
+    latency_std = sqrt(stddev/size);
+    // return sqrt(stddev/size);
+}
 
 int run(Ort::Session &session)
 {
@@ -93,7 +111,8 @@ int run(Ort::Session &session)
         auto time_span = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
         warmup_time = warmup_time + time_span.count();
     }
-    double run_time = 0;
+    double latency_avg = 0,latency_std=0;
+    std::vector<double> latency_per_rounds;
     for (int i = 0; i < run_rounds; i++)
     {
         std::vector<const char *> input_names_ptr;
@@ -110,9 +129,11 @@ int run(Ort::Session &session)
         auto output_tensors = session.Run(Ort::RunOptions{nullptr}, input_names_ptr.data(), input_tensors.data(), input_count, output_names_ptr.data(), output_count);
         std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
         auto time_span = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
-        run_time = run_time + time_span.count();
+        // run_time = run_time + time_span.count();
+        latency_per_rounds.push_back(time_span.count());
     }
-    printf("warmup: %d rounds, avg time: %f ms\nrun: %d rounds, avg time: %f ms\n",warmup_rounds,warmup_time*1.0/warmup_rounds,run_rounds,run_time*1.0/run_rounds);
+    calc_std_deviation(latency_per_rounds,latency_per_rounds.size(),latency_avg,latency_std);
+    printf("warmup: %d rounds, avg time: %f ms\nrun: %d rounds, avg time: %f +- %f ms\n",warmup_rounds,warmup_time*1.0/warmup_rounds,run_rounds,latency_avg,latency_std);
     return 0;
 }
 
