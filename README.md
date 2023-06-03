@@ -38,16 +38,30 @@ cmake --build . --target main
 # adb push --sync libs/gflags/android/arm64-v8a /data/local/tmp/hcp/
 
 # 
-adb push 3rd-party/onnxruntime/build/Android/Debug/*.so /data/local/tmp/hcp/libs
-adb push 3rd-party/onnxruntime/build/Android/Debug/*.a /data/local/tmp/hcp/libs
-adb push models/FasterRCNN-12.onnx /mnt/sdcard/ort_models
-adb push build/main /data/local/tmp/hcp/main
-adb shell "chmod +x /data/local/tmp/hcp/main"
+adb -s 9YS0220110011018 shell "mkdir -p /data/local/tmp/hcp/libs"
+adb -s 9YS0220110011018 push 3rd-party/onnxruntime/build/Android/Debug/*.so /data/local/tmp/hcp/libs
+adb -s 9YS0220110011018 push 3rd-party/onnxruntime/build/Android/Debug/*.a /data/local/tmp/hcp/libs
+adb -s 9YS0220110011018 push models/mobileone/*.onnx /data/local/tmp/ort_models
+adb -s 9YS0220110011018 push models/mobilevit/*.onnx /data/local/tmp/ort_models
+adb -s 9YS0220110011018 push models/FasterRCNN-12.onnx /mnt/sdcard/ort_models
+
+adb -s 9YS0220110011018 push build/main /data/local/tmp/hcp/main
+adb -s 3a9c4f5 shell "chmod +x /data/local/tmp/hcp/main"
 
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs"
 /data/local/tmp/hcp/main --graph="/mnt/sdcard/ort_models/FasterRCNN-12.onnx" --warmup_runs 3 --num_runs 10
+adb -s 9YS0220110011018 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/main --graph="/data/local/tmp/ort_models/mobileone_unfused_s0-opset12.onnx" --warmup_runs 10 --num_runs 30 --num_threads 1'
+adb -s 9YS0220110011018 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/main --graph="/data/local/tmp/ort_models/mobileone_unfused_s0-opset12.onnx" --warmup_runs 10 --num_runs 30 --num_threads 2'
+adb -s 9YS0220110011018 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/main --graph="/data/local/tmp/ort_models/mobileone_unfused_s0-opset12.onnx" --warmup_runs 10 --num_runs 30 --num_threads 3'
+adb -s 9YS0220110011018 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/main --graph="/data/local/tmp/ort_models/mobileone_unfused_s0-opset12.onnx" --warmup_runs 10 --num_runs 30 --num_threads 4 --enable_op_profiling true --prefix /data/local/tmp/mobileone-s0'
+adb -s 9YS0220110011018 pull /data/local/tmp/mobileone-s0_2023-05-27_21-51-46.json .
 
 
+
+adb -s 9YS0220110011018 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/main --graph="/data/local/tmp/ort_models/mobilevit_v2-opset12.onnx" --warmup_runs 10 --num_runs 30 --num_threads 1'
+adb -s 9YS0220110011018 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/main --graph="/data/local/tmp/ort_models/mobilevit_v2-opset12.onnx" --warmup_runs 10 --num_runs 30 --num_threads 2'
+adb -s 9YS0220110011018 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/main --graph="/data/local/tmp/ort_models/mobilevit_v2-opset12.onnx" --warmup_runs 10 --num_runs 30 --num_threads 3'
+adb -s 9YS0220110011018 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/main --graph="/data/local/tmp/ort_models/mobilevit_v2-opset12.onnx" --warmup_runs 10 --num_runs 30 --num_threads 4'
 ```
 
 

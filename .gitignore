@@ -8,4 +8,5 @@ libs/
 scripts/*.json
 scripts/*.xlsx
 tmp/
+*.json
 

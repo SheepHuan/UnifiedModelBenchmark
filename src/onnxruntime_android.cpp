@@ -15,7 +15,7 @@
 DEFINE_string(graph, "", "onnx model path");
 DEFINE_int32(warmup_runs, 3, "warmup_runs");
 DEFINE_int32(num_runs, 10, "num_runs");
-DEFINE_int32(num_threads, 3, "num_threads");
+DEFINE_int32(num_threads, 2, "num_threads");
 // DEFINE_bool(use_nnapi, false, "use nnapi");
 DEFINE_bool(enable_op_profiling, false, "enable_op_profiling");
 DEFINE_string(prefix, "", "result");
@@ -133,7 +133,7 @@ int run(Ort::Session &session)
         latency_per_rounds.push_back(time_span.count());
     }
     calc_std_deviation(latency_per_rounds,latency_per_rounds.size(),latency_avg,latency_std);
-    printf("warmup: %d rounds, avg time: %f ms\nrun: %d rounds, avg time: %f +- %f ms\n",warmup_rounds,warmup_time*1.0/warmup_rounds,run_rounds,latency_avg,latency_std);
+    printf("warmup: %d rounds, avg time: %f ms\nrun: %d rounds, avg time: %f ms, std: %f ms\n",warmup_rounds,warmup_time*1.0/warmup_rounds,run_rounds,latency_avg,latency_std);
     return 0;
 }
 
@@ -144,10 +144,14 @@ int main(int argc, char **argv)
     std::string model_path = FLAGS_graph;
     bool enable_op_profiling = FLAGS_enable_op_profiling;
     std::string result_prefix = FLAGS_prefix;
+    int num_threads = FLAGS_num_threads;
     Ort::Env env = Ort::Env{ORT_LOGGING_LEVEL_ERROR, "Default"};
     Ort::SessionOptions session_options;
     if (enable_op_profiling)
-        session_options.EnableProfiling(result_prefix.c_str());
+        session_options.EnableProfiling(result_prefix.c_str());\
+    session_options.SetIntraOpNumThreads(num_threads);
+    session_options.SetExecutionMode(ExecutionMode::ORT_SEQUENTIAL);
+    session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
     // 注册NNApi
     //     if (FLAGS_use_nnapi)
     //     {
