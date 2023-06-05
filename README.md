@@ -18,14 +18,28 @@ cmake --build . --target main
 ### Android
 ```bash
 # linux 交叉编译 android 可执行文件
-cmake -DTARGET_OS:STRING="android" -DCMAKE_TOOLCHAIN_FILE="/root/android_sdk/ndk/25.0.8775105/build/cmake/android.toolchain.cmake" -DANDROID_ABI="arm64-v8a" -DANDROID_PLATFORM=android-29 -G "Ninja" ..
-cmake --build . --target main
+cmake -DTARGET_OS:STRING="android" -DTARGET_FRAMEWROK:STRING="paddlelite" -DCMAKE_TOOLCHAIN_FILE="/root/android_sdk/ndk/25.0.8775105/build/cmake/android.toolchain.cmake" -DANDROID_ABI="arm64-v8a" -DANDROID_PLATFORM=android-29 -G "Ninja" ..
+cmake --build . --target aiot_benchmark
 ```
 
 ### Windows
 
 
 ## 运行demo
+https://www.paddlepaddle.org.cn/lite/v2.12/user_guides/opt/opt_python.html
+```bash
+adb -s 3a9c4f5 push 3rd-party/Paddle-Lite/build.lite.android.armv8.clang/inference_lite_lib.android.armv8.opencl/cxx/lib/*.so /data/local/tmp/hcp/libs
+adb -s 3a9c4f5 push models/mobilenet_v1_opt.nb /data/local/tmp/hcp/
+
+adb -s 3a9c4f5 push build/aiot_benchmark /data/local/tmp/hcp/
+adb -s 3a9c4f5 shell "chmod +x /data/local/tmp/hcp/aiot_benchmark"
+adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/aiot_benchmark --graph="/data/local/tmp/hcp/mobilenet_v1_opt.nb" --graph_is_dir=false --warmup_runs=5 --num_runs=5 --num_threads=1 --cpu_power_mode=0'
+
+paddle_lite_opt \
+    --model_dir=models/mobilenetv1 \
+    --valid_targets=arm \
+    --optimize_out=mobilenet_v1_opt
+```
 
 ```bash
 # adb push tmp/conv2d /mnt/sdcard/ort_models

@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.18)
 project (Benchmark)
 set(CMAKE_CXX_STANDARD 11)
-set(APP_NAME main)
+set(APP_NAME aiot_benchmark)
 
 
 # 支持gdb调试
