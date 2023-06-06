@@ -33,7 +33,12 @@ adb -s 3a9c4f5 push models/mobilenet_v1_opt.nb /data/local/tmp/hcp/
 
 adb -s 3a9c4f5 push build/aiot_benchmark /data/local/tmp/hcp/
 adb -s 3a9c4f5 shell "chmod +x /data/local/tmp/hcp/aiot_benchmark"
-adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/aiot_benchmark --graph="/data/local/tmp/hcp/mobilenet_v1_opt.nb" --graph_is_dir=false --warmup_runs=5 --num_runs=5 --num_threads=1 --cpu_power_mode=0'
+
+adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/aiot_benchmark --graph="/data/local/tmp/hcp/MobileNetV1" --graph_is_dir=true --nums_warmnup=50 --nums_run=50 --num_threads=1 --cpu_power_mode=0 --backend=arm --input_shape=1,3,224,224'
+
+adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/aiot_benchmark --graph="/data/local/tmp/hcp/MobileNetV1" --graph_is_dir=true --nums_warmnup=15 --nums_run=50 --num_threads=1 --cpu_power_mode=0 --backend=opencl --input_shape=1,3,224,224'
+
+adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/aiot_benchmark'
 
 paddle_lite_opt \
     --model_dir=models/mobilenetv1 \

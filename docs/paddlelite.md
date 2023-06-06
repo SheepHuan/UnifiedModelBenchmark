@@ -28,6 +28,24 @@ bash lite/tools/build_android.sh \
 --with_arm82_fp16=ON \
 --with_extra=ON \
 --with_opencl=ON
+
+bash lite/tools/build_android.sh \
+--arch=armv8 \
+--toolchain=clang \
+--android_stl=c++_shared \
+--with_java=OFF \
+--with_profile=ON \
+--android_api_level=27 \
+--with_arm82_fp16=ON \
+--with_extra=ON \
+--with_opencl=ON full_publish
+
+bash lite/tools/build_android.sh \
+--arch=armv8 \
+--toolchain=clang \
+--android_stl=c++_shared \
+--with_profile=ON \
+--android_api_level=27 full_publish
 ```
 
 

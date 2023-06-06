@@ -10,3 +10,4 @@ scripts/*.xlsx
 tmp/
 *.json
 
+3rd-party/onnxruntime

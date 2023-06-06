@@ -1,9 +1,9 @@
-[submodule "3rd-party/gflags"]
-	path = 3rd-party/gflags
-	url = https://github.com/gflags/gflags.git
-[submodule "3rd-party/opencv"]
-	path = 3rd-party/opencv
-	url = https://github.com/opencv/opencv.git
-[submodule "3rd-party/onnxruntime"]
-	path = 3rd-party/onnxruntime
-	url = https://github.com/microsoft/onnxruntime.git
+# [submodule "3rd-party/gflags"]
+# 	path = 3rd-party/gflags
+# 	url = https://github.com/gflags/gflags.git
+# [submodule "3rd-party/opencv"]
+# 	path = 3rd-party/opencv
+# 	url = https://github.com/opencv/opencv.git
+# [submodule "3rd-party/onnxruntime"]
+# 	path = 3rd-party/onnxruntime
+# 	url = https://github.com/microsoft/onnxruntime.git

@@ -68,7 +68,8 @@ if (TARGET_FRAMEWROK STREQUAL "onnxruntime")
     elseif(TARGET_FRAMEWROK STREQUAL "paddlelite")
         add_executable(${APP_NAME} "src/paddlelite_android.cpp")
         set(PaddleLiteLib
-            paddle_light_api_shared)
+        # paddle_full_api_shared
+        paddle_full_api_shared)
         target_link_libraries(
             ${APP_NAME} 
             ${PaddleLiteLib}
