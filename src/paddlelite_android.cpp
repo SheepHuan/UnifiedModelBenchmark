@@ -16,76 +16,76 @@ DEFINE_int32(nums_run, 10, "num runs");
 DEFINE_int32(num_threads, 4, "num threads");
 DEFINE_int32(cpu_power_mode, 0, "cpu power mode");
 DEFINE_string(input_shape, "", "input_shape");
-// int64_t ShapeProduction(const shape_t &shape)
-// {
-//     int64_t res = 1;
-//     for (auto i : shape)
-//     {
-//         res *= i;
-//     }
-//     return res;
-// }
+int64_t ShapeProduction(const shape_t &shape)
+{
+    int64_t res = 1;
+    for (auto i : shape)
+    {
+        res *= i;
+    }
+    return res;
+}
 
-// shape_t read_shape(std::string shape_str)
-// {
-//     std::vector<int64_t> shape;
-//     std::stringstream ss(shape_str);
-//     std::string token;
-//     while (getline(ss, token, ','))
-//     {
-//         int i = std::stoi(token);
+shape_t read_shape(std::string shape_str)
+{
+    std::vector<int64_t> shape;
+    std::stringstream ss(shape_str);
+    std::string token;
+    while (getline(ss, token, ','))
+    {
+        int i = std::stoi(token);
 
-//         shape.push_back(i);
-//     }
+        shape.push_back(i);
+    }
 
-//     return shape;
-// }
+    return shape;
+}
 
-// void run(std::shared_ptr<PaddlePredictor> predictor, int warmup_runs, int num_runs)
-// {
-//     std::string input_shape_str = FLAGS_input_shape;
-//     std::cout << input_shape_str << std::endl;
-//     shape_t xshape = read_shape(input_shape_str);
+void run(std::shared_ptr<PaddlePredictor> predictor, int warmup_runs, int num_runs)
+{
+    std::string input_shape_str = FLAGS_input_shape;
+    std::cout << input_shape_str << std::endl;
+    shape_t xshape = read_shape(input_shape_str);
 
-//     std::vector<std::string> input_names = predictor->GetInputNames();
-//     int input_count = 0, output_count = 0;
-//     for (int i = 0; i < input_names.size(); i++)
-//     {
-//         printf("Input name[%d]: %s\n", i, input_names[i].c_str());
-//         input_count++;
-//         std::unique_ptr<Tensor> input_tensor(std::move(predictor->GetInput(0)));
+    std::vector<std::string> input_names = predictor->GetInputNames();
+    int input_count = 0, output_count = 0;
+    for (int i = 0; i < input_names.size(); i++)
+    {
+        printf("Input name[%d]: %s\n", i, input_names[i].c_str());
+        input_count++;
+        std::unique_ptr<Tensor> input_tensor(std::move(predictor->GetInput(0)));
 
-//         input_tensor->Resize(xshape);
-//         auto *data = input_tensor->mutable_data<float>();
-//         for (int i = 0; i < ShapeProduction(input_tensor->shape()); ++i)
-//         {
-//             data[i] = 1;
-//         }
-//     }
-//     MyTimer timer = MyTimer();
-//     for (int i = 0; i < warmup_runs; i++)
-//     {
-//         timer.start();
-//         predictor->Run();
-//         timer.end();
-//         printf("round: %d, lat: %0.3f\n", i, timer.get_time());
-//     }
+        input_tensor->Resize(xshape);
+        auto *data = input_tensor->mutable_data<float>();
+        for (int i = 0; i < ShapeProduction(input_tensor->shape()); ++i)
+        {
+            data[i] = 1;
+        }
+    }
+    MyTimer timer = MyTimer();
+    for (int i = 0; i < warmup_runs; i++)
+    {
+        timer.start();
+        predictor->Run();
+        timer.end();
+        printf("round: %d, lat: %0.3f\n", i, timer.get_time());
+    }
 
-//     std::vector<std::string> output_names = predictor->GetOutputNames();
-//     for (int i = 0; i < output_names.size(); i++)
-//     {
-//         printf("Output name[%d]: %s\n", i, output_names[i].c_str());
-//         std::unique_ptr<const Tensor> output_tensor(std::move(predictor->GetOutput(0)));
-//         ShapeProduction(output_tensor->shape());
-//         printf("[ ");
-//         for (auto i : output_tensor->shape())
-//         {
-//             printf("%d ", i);
-//         }
-//         printf("]\n");
-//         output_count++;
-//     }
-// }
+    std::vector<std::string> output_names = predictor->GetOutputNames();
+    for (int i = 0; i < output_names.size(); i++)
+    {
+        printf("Output name[%d]: %s\n", i, output_names[i].c_str());
+        std::unique_ptr<const Tensor> output_tensor(std::move(predictor->GetOutput(0)));
+        ShapeProduction(output_tensor->shape());
+        printf("[ ");
+        for (auto i : output_tensor->shape())
+        {
+            printf("%d ", i);
+        }
+        printf("]\n");
+        output_count++;
+    }
+}
 
 int main(int argc, char **argv)
 {
@@ -151,6 +151,6 @@ int main(int argc, char **argv)
 
     std::shared_ptr<PaddlePredictor> predictor =
         CreatePaddlePredictor<CxxConfig>(config);
-    // run(predictor, warmup_runs, num_runs);
+    run(predictor, nums_warmup, num_runs);
     return 0;
 }
