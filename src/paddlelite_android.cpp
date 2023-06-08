@@ -63,7 +63,7 @@ void run(std::shared_ptr<PaddlePredictor> predictor, int warmup_runs, int num_ru
         }
     }
     MyTimer timer = MyTimer();
-    for (int i = 0; i < warmup_runs; i++)
+    for (int i = 0; i < num_runs; i++)
     {
         timer.start();
         predictor->Run();
