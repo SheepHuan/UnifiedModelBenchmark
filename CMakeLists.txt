@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.18)
 project (Benchmark)
 set(CMAKE_CXX_STANDARD 11)
-set(APP_NAME aiot_benchmark)
+
 
 
 # 支持gdb调试
@@ -54,7 +54,7 @@ endif()
 
 
 if (TARGET_FRAMEWROK STREQUAL "onnxruntime")
-       
+        set(APP_NAME ort_benchmark)
         # 构建可执行文件
         add_executable(${APP_NAME} "src/onnxruntime_android.cpp")
         set(OrtLib
@@ -66,6 +66,7 @@ if (TARGET_FRAMEWROK STREQUAL "onnxruntime")
             gflags::gflags
         )
     elseif(TARGET_FRAMEWROK STREQUAL "paddlelite")
+        set(APP_NAME paddlelite_benchmark)
         add_executable(${APP_NAME} "src/paddlelite_android.cpp")
         set(PaddleLiteLib
         # paddle_full_api_shared
