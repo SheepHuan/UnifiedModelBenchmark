@@ -64,8 +64,19 @@ adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/m
 
 
 ### 2.2 ncnn 运行 .onnx
-
 ```bash
+# 1. 创建libs,models文件夹
+adb -s 3a9c4f5 shell "mkdir -p /data/local/tmp/mobifuse /data/local/tmp/mobifuse/libs /data/local/tmp/mobifuse/models"
+# 2. 推送编译好的onnxruntime.so以及相关.a的库文件到anroid端
+adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/3rd-party/ncnn/build-android-aarch64/install/lib/*.so /data/local/tmp/mobifuse/libs
+# 3. 推送编译好的benchmark可执行程序到android端
+adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/build/ncnn_benchmark /data/local/tmp/mobifuse
+
+# 4. 推送模型文件到android端
+adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/models/fusenet_large_simple.bin /data/local/tmp/mobifuse/models
+adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/models/fusenet_large_simple.param /data/local/tmp/mobifuse/models
+# 5. 执行adb shell指令
+adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/mobifuse/libs" && /data/local/tmp/mobifuse/ncnn_benchmark --graph="/data/local/tmp/mobifuse/models/fusenet_large_simple.bin" --param="/data/local/tmp/mobifuse/models/fusenet_large_simple.param" --nums_warmup=10 --num_runs=30 --num_threads=4'
 
 ```
 

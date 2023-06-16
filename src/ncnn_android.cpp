@@ -51,9 +51,14 @@ std::vector<int64_t> read_shape(std::string shape_str)
 void run(const char *model_path, const char *param_path)
 {
     ncnn::Net net;
-    net.load_model(model_path);
-    net.load_param(param_path);
-
+    if (net.load_model(model_path) == -1)
+    {
+        LOG(ERROR) << "fail load graph: " << model_path;
+    }
+    if (net.load_param(param_path) == -1)
+    {
+        LOG(ERROR) << "fail load param: " << model_path;
+    }
     const std::vector<const char *> &input_names = net.input_names();
     const std::vector<const char *> &output_names = net.output_names();
 
@@ -64,7 +69,7 @@ void run(const char *model_path, const char *param_path)
 
     for (int i = 0; i < output_names.size(); i++)
     {
-        LOG(INFO) << i << " output:" << output_names[i];
+        LOG(INFO) << i << " output: " << output_names[i];
     }
 }
 
@@ -97,7 +102,7 @@ int main(int argc, char **argv)
     {
         LOG(ERROR) << "unkown backend for ncnn: " << backend;
     }
-    run(model_path.c_str(), param_path.c_str());
+
     // std::vector<int64_t> input_shape = read_shape(input_shape_str);
     // int64_t size = 1;
     // for (auto dim:input_shape){
