@@ -48,7 +48,15 @@ elseif(TARGET_OS STREQUAL "android")
         link_directories(
             "${CMAKE_SOURCE_DIR}/3rd-party/Paddle-Lite/build.lite.android.armv8.clang/inference_lite_lib.android.armv8.opencl/cxx/lib"
             )
-        
+    elseif(TARGET_FRAMEWROK STREQUAL "ncnn")
+        include_directories(
+            "${CMAKE_SOURCE_DIR}/include"
+            "${CMAKE_SOURCE_DIR}/include/ncnn"
+            "${CMAKE_SOURCE_DIR}/include/glslang"
+        )
+        link_directories(
+            "${CMAKE_SOURCE_DIR}/3rd-party/ncnn/build-android-aarch64/install/lib"
+            )        
     endif()
 endif()
 
