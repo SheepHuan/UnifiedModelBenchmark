@@ -24,6 +24,7 @@ DEFINE_string(prefix, "", "result");
 INITIALIZE_EASYLOGGINGPP
 void print_args()
 {
+     LOG(INFO) <<"=================================\t"<<"Args Info"<<"\t=================================";
     std::string model_path = FLAGS_graph;
     std::string backend = FLAGS_backend;
     bool enable_op_profiling = FLAGS_enable_op_profiling;
@@ -45,6 +46,7 @@ void print_args()
 
 int run(Ort::Session &session, int warmup_rounds, int run_rounds)
 {
+    LOG(INFO) <<"=================================\t"<<"Runtime Info"<<"\t=================================";
     std::vector<Ort::AllocatedStringPtr> ptrs;
     std::vector<Ort::Value> input_tensors;
     std::vector<std::string> input_names;

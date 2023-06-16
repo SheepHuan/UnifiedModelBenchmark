@@ -76,7 +76,7 @@ adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/build/ncnn_benc
 adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/models/fusenet_large_simple.bin /data/local/tmp/mobifuse/models
 adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/models/fusenet_large_simple.param /data/local/tmp/mobifuse/models
 # 5. 执行adb shell指令
-adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/mobifuse/libs" && /data/local/tmp/mobifuse/ncnn_benchmark --graph="/data/local/tmp/mobifuse/models/fusenet_large_simple.bin" --param="/data/local/tmp/mobifuse/models/fusenet_large_simple.param" --nums_warmup=10 --num_runs=30 --num_threads=4'
+adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/mobifuse/libs" && /data/local/tmp/mobifuse/ncnn_benchmark --graph="/data/local/tmp/mobifuse/models/fusenet_large_simple.bin" --param="/data/local/tmp/mobifuse/models/fusenet_large_simple.param" --nums_warmup=10 --num_runs=30 --num_threads=4 --input_info="input:1x4x128x128" --output_info="output:1x7x128x128,feat_out:1x4x128x128"'
 
 ```
 
