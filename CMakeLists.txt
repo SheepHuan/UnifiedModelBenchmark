@@ -64,7 +64,9 @@ endif()
 if (TARGET_FRAMEWROK STREQUAL "onnxruntime")
         set(APP_NAME ort_benchmark)
         # 构建可执行文件
-        add_executable(${APP_NAME} "src/onnxruntime_android.cpp")
+        add_executable(${APP_NAME} 
+            "src/onnxruntime_android.cpp"
+            "src/easylogging++.cc")
         set(OrtLib
             onnxruntime)
         # 链接共享库
