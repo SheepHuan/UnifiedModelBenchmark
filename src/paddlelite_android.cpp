@@ -4,6 +4,7 @@
 #include "math.h"
 #include "mutils/log.hpp"
 #include "mutils/timer.hpp"
+#include "mutils/profile.hpp"   
 #include <sstream>
 #include <iostream>
 using namespace paddle::lite_api;
@@ -63,13 +64,30 @@ void run(std::shared_ptr<PaddlePredictor> predictor, int warmup_runs, int num_ru
         }
     }
     MyTimer timer = MyTimer();
+    double latency_avg = 0, latency_std = 0;
+    std::vector<double> latency_per_rounds;
+
+    double warmup_latency_avg = 0, warmup_latency_std = 0;
+    std::vector<double> warmup_latency_per_rounds;
+    for (int i = 0; i < warmup_runs; i++)
+    {
+        timer.start();
+        predictor->Run();
+        timer.end();
+        warmup_latency_per_rounds.push_back( timer.get_time());
+    }
+
+
     for (int i = 0; i < num_runs; i++)
     {
         timer.start();
         predictor->Run();
         timer.end();
-        printf("round: %d, lat: %0.3f\n", i, timer.get_time());
+        latency_per_rounds.push_back( timer.get_time());
     }
+    calc_std_deviation(warmup_latency_per_rounds, warmup_latency_per_rounds.size(), warmup_latency_avg, warmup_latency_std);
+    calc_std_deviation(latency_per_rounds, latency_per_rounds.size(), latency_avg, latency_std);
+    printf("warmup: %d rounds, avg time: %f ms, std: %f ms\nrun: %d rounds, avg time: %f ms, std: %f ms\n", warmup_runs,warmup_latency_avg,warmup_latency_std, num_runs, latency_avg, latency_std);
 
     std::vector<std::string> output_names = predictor->GetOutputNames();
     for (int i = 0; i < output_names.size(); i++)

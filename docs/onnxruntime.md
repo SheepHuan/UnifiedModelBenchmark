@@ -52,5 +52,7 @@ sdkmanager --install "ndk;25.0.8775105"
 export https_proxy="http://172.16.101.68:7890"
 export http_proxy="http://172.16.101.68:7890"
 ./build.sh --config Release --android --android_sdk_path /root/android_sdk --android_ndk_path /root/android_sdk/ndk/25.0.8775105 --use_nnapi --build_shared_lib --android_abi arm64-v8a --android_api 29 --cmake_generator Ninja 
+
+./build.sh --config RelWithDebInfo --allow_running_as_root --android --android_sdk_path /root/android_sdk --android_ndk_path /root/android_sdk/ndk/25.0.8775105 --use_nnapi --android_abi arm64-v8a --android_api 29 --cmake_generator Ninja 
 # 编译完成后取出libonnxruntime.so
 ```
