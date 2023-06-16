@@ -91,7 +91,6 @@ int run(Ort::Session &session)
         }
         timer.start();
         auto output_tensors = session.Run(Ort::RunOptions{nullptr}, input_names_ptr.data(), input_tensors.data(), input_count, output_names_ptr.data(), output_count);
-        std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
         timer.end();
         warmup_time = warmup_time + timer.get_time();
     }

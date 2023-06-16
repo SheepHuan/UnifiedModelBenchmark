@@ -38,7 +38,7 @@ elseif(TARGET_OS STREQUAL "android")
         "${CMAKE_SOURCE_DIR}/include/onnxruntime/core/session"
         )
         link_directories(
-            "${CMAKE_SOURCE_DIR}/3rd-party/onnxruntime/build/Android/Debug"
+            "${CMAKE_SOURCE_DIR}/3rd-party/onnxruntime/build/Android/Release"
             )
     elseif(TARGET_FRAMEWROK STREQUAL "paddlelite")
         include_directories(

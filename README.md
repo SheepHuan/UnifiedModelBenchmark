@@ -19,7 +19,9 @@ cmake --build . --target main
 ```bash
 # linux 交叉编译 android 可执行文件
 cmake -DTARGET_OS:STRING="android" -DTARGET_FRAMEWROK:STRING="paddlelite" -DCMAKE_TOOLCHAIN_FILE="/root/android_sdk/ndk/25.0.8775105/build/cmake/android.toolchain.cmake" -DANDROID_ABI="arm64-v8a" -DANDROID_PLATFORM=android-29 -G "Ninja" ..
-cmake --build . --target aiot_benchmark
+
+cmake -DTARGET_OS:STRING="android" -DTARGET_FRAMEWROK:STRING="onnxruntime" -DCMAKE_TOOLCHAIN_FILE="/root/android_sdk/ndk/25.0.8775105/build/cmake/android.toolchain.cmake" -DANDROID_ABI="arm64-v8a" -DANDROID_PLATFORM=android-29 -G "Ninja" ..
+cmake --build . --target ort_benchmark
 ```
 
 ### Windows
