@@ -1,7 +1,7 @@
 # Benchmark
 
-## 编译指令
-### Linux
+## 1 编译指令
+### 1.1 Linux
 ```bash
 # linux
 cd build
@@ -13,7 +13,7 @@ cmake --build . --target main
 ./main --model_path="/root/workspace/UnifiedModelBenchmark/models/ssd-12.onnx" --prefix="1"
 ```
 
-### Android
+### 1.2 Linux交叉编译Android
 ```bash
 # linux 交叉编译 android 可执行文件，要求先编译完依赖库onnxruntime.so paddlelite.so ncnn.so
 # 编译paddlelite benchmark
@@ -27,18 +27,47 @@ cmake -DTARGET_OS:STRING="android" -DTARGET_FRAMEWROK:STRING="ncnn" -DCMAKE_TOOL
 cmake --build . --target ncnn_benchmark
 ```
 
-### Windows
+## 2 demo
+
+### 2.1 onnxruntime 运行 .onnx
+#### 2.1.1 ort_benchmark 参数解释
+
+- `graph`, 模型图的路径.
+- `backend`, ort的推理后端,默认`arm`,可选`arm`,`nnapi`.
+- `num_threads`, ort的后端为`arm`的时候，可以选择CPU推理数量`1,..,4,..,8`
+- `nums_warmup`, 热身次数，不参与计时.
+- `num_runs`, 推理次数.
+- `enable_op_profiling`, 是否打开op profiling,这将会保存文件到当前目录,默认是`false`
+- `prefix`, 当`enable_op_profiling=true`时，可以设置`prefix`作为文件前缀，改变保存目录。
+
+#### 2.1.2 demo
 ```bash
+# 1. 创建libs,models文件夹
 adb -s 3a9c4f5 shell "mkdir -p /data/local/tmp/mobifuse /data/local/tmp/mobifuse/libs /data/local/tmp/mobifuse/models"
+# 2. 推送编译好的onnxruntime.so以及相关.a的库文件到anroid端
 adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/3rd-party/onnxruntime/build/Android/Release/*.so /data/local/tmp/mobifuse/libs
+# 3. 推送编译好的benchmark可执行程序到android端
 adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/build/ort_benchmark /data/local/tmp/mobifuse
 
+# 4. 推送模型文件到android端
 adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/models/fusenet_large-opset16.onnx /data/local/tmp/mobifuse/models
 
+# 5. 执行adb shell指令
 adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/mobifuse/libs" && /data/local/tmp/mobifuse/ort_benchmark --graph="/data/local/tmp/mobifuse/models/fusenet_large-opset16.onnx" --nums_warmup=10 --num_runs=30 --num_threads=4'
+
 ```
 
-## 运行demo
+
+
+### 2.2 ncnn 运行 .onnx
+
+```bash
+
+```
+
+
+
+### 2.3 paddlelite 运行 .pb
 https://www.paddlepaddle.org.cn/lite/v2.12/user_guides/opt/opt_python.html
 ```bash
 adb -s 3a9c4f5 push 3rd-party/Paddle-Lite/build.lite.android.armv8.clang/inference_lite_lib.android.armv8.opencl/cxx/lib/*.so /data/local/tmp/hcp/libs
@@ -63,28 +92,18 @@ paddle_lite_opt \
 
 
 
-
-## 代码依赖库
-
-1. [onnxruntime@v1.14.1](https://github.com/microsoft/onnxruntime.git)
-2. [opencv@v4.7.0](https://github.com/opencv/opencv.git )
-3. [gflags@2.2.2](https://github.com/gflags/gflags)
-```bash
-git submodule add https://github.com/gflags/gflags.git 3rd-party/gflags
-git submodule add https://github.com/opencv/opencv.git 3rd-party/opencv
-git submodule add https://github.com/microsoft/onnxruntime.git 3rd-party/onnxruntime
-# 确认子模块
-git submodule update --init --recursive
-```
-
 ## TODO
 1. 学会如何将opencv作为子模块加入本项目,简化编译流程(blog记录)
-2. 支持onnxruntime android端推理
+2. 支持onnxruntime android端推理,DONE
 3. 支持tensorflow lite android端推理
-4. 支持paddle lite android端推理
+4. 支持paddle lite android端推理,DONE
+5. 支持ncnn lite android端推理,DONE
  
 
 
 ## 参考代码
 
-[1] https://github.com/rxi/log.c/
+[1] https://github.com/abumq/easyloggingpp/
+[2] [onnxruntime@v1.14.1](https://github.com/microsoft/onnxruntime.git)
+[3] [gflags@2.2.2](https://github.com/gflags/gflags)
+[4] [ncnn@20230327](https://github.com/Tencent/ncnn)
