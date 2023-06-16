@@ -39,7 +39,7 @@ void print_args()
         LOG(INFO) << "cpu threads: " << num_threads;
     }
 
-    LOG(INFO) << "nums_warmup_runs: " << nums_warmup;
+    LOG(INFO) << "nums_warmup: " << nums_warmup;
     LOG(INFO) << "num_runs: " << num_runs;
 }
 
@@ -183,8 +183,18 @@ int main(int argc, char **argv)
     session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
 
     Ort::Session session{env, model_path.c_str(), session_options}; // CPU
-
-    run(session, nums_warmup, num_runs);
+    if (backend == "arm")
+    {
+        run(session, nums_warmup, num_runs);
+    }
+    else if (backend == "nnapi")
+    {
+        LOG(WARNING) << "nnapi backend is not avaliable now!";
+    }
+    else
+    {
+        LOG(ERROR) << "unkown backend for onnxruntime: " << backend;
+    }
     return 0;
 
     // 注册NNApi

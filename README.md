@@ -11,6 +11,10 @@ cmake --build . --target main
 ./main --model_path="/root/workspace/UnifiedModelBenchmark/models/squeezenet1.0-12-int8.onnx" --prefix="1"
 ./main --model_path="/root/workspace/UnifiedModelBenchmark/models/FasterRCNN-12.onnx" --prefix="1"
 ./main --model_path="/root/workspace/UnifiedModelBenchmark/models/ssd-12.onnx" --prefix="1"
+
+
+# ncnn
+mkdir 
 ```
 
 ### 1.2 Linux交叉编译Android
@@ -23,7 +27,7 @@ cmake --build . --target paddlelite_benchmark
 cmake -DTARGET_OS:STRING="android" -DTARGET_FRAMEWROK:STRING="onnxruntime" -DCMAKE_TOOLCHAIN_FILE="/root/android_sdk/ndk/25.0.8775105/build/cmake/android.toolchain.cmake" -DANDROID_ABI="arm64-v8a" -DANDROID_PLATFORM=android-29 -G "Ninja" ..
 cmake --build . --target ort_benchmark
 # 编译ncnn benchmark
-cmake -DTARGET_OS:STRING="android" -DTARGET_FRAMEWROK:STRING="ncnn" -DCMAKE_TOOLCHAIN_FILE="/root/android_sdk/ndk/25.0.8775105/build/cmake/android.toolchain.cmake" -DANDROID_ABI="arm64-v8a" -DANDROID_PLATFORM=android-29 -G "Ninja" ..
+cmake -DTARGET_OS:STRING="android" -DTARGET_FRAMEWROK:STRING="ncnn" -DCMAKE_TOOLCHAIN_FILE="/root/android_sdk/ndk/25.0.8775105/build/cmake/android.toolchain.cmake" -DANDROID_ABI="arm64-v8a"  -DANDROID_PLATFORM=android-29 -G "Ninja" ..
 cmake --build . --target ncnn_benchmark
 ```
 
@@ -107,3 +111,4 @@ paddle_lite_opt \
 [2] [onnxruntime@v1.14.1](https://github.com/microsoft/onnxruntime.git)
 [3] [gflags@2.2.2](https://github.com/gflags/gflags)
 [4] [ncnn@20230327](https://github.com/Tencent/ncnn)
+[5] [onnx-simplifier](https://github.com/daquexian/onnx-simplifier/blob/master/README.md)

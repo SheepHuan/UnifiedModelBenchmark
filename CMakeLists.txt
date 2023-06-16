@@ -75,18 +75,30 @@ if (TARGET_FRAMEWROK STREQUAL "onnxruntime")
             ${OrtLib}
             gflags::gflags
         )
-    elseif(TARGET_FRAMEWROK STREQUAL "paddlelite")
-        set(APP_NAME paddlelite_benchmark)
-        add_executable(${APP_NAME} "src/paddlelite_android.cpp")
-        set(PaddleLiteLib
-        # paddle_full_api_shared
-        paddle_full_api_shared)
-        target_link_libraries(
-            ${APP_NAME} 
-            ${PaddleLiteLib}
-            gflags::gflags
-            )
-    endif()
+elseif(TARGET_FRAMEWROK STREQUAL "paddlelite")
+    set(APP_NAME paddlelite_benchmark)
+    add_executable(${APP_NAME} "src/paddlelite_android.cpp")
+    set(PaddleLiteLib
+    # paddle_full_api_shared
+    paddle_full_api_shared)
+    target_link_libraries(
+        ${APP_NAME} 
+        ${PaddleLiteLib}
+        gflags::gflags
+        )
+elseif(TARGET_FRAMEWROK STREQUAL "ncnn")
+set(APP_NAME ncnn_benchmark)
+    add_executable(${APP_NAME} 
+    "src/ncnn_android.cpp"
+    "src/easylogging++.cc")
+    set(ncnnLib
+    ncnn)
+    target_link_libraries(
+        ${APP_NAME}
+        ${ncnnLib}
+        gflags::gflags
+        )
+endif()
 
 
 
