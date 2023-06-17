@@ -13,6 +13,7 @@
 #include <gflags/gflags.h>
 #include "mutils/profile.hpp"
 #include "mutils/timer.hpp"
+#include <float.h>
 DEFINE_string(graph, "", "onnx model path");
 DEFINE_int32(nums_warmup, 3, "nums_warmup");
 DEFINE_int32(num_runs, 10, "num_runs");
@@ -44,7 +45,7 @@ void print_args()
     LOG(INFO) << "num_runs: " << num_runs;
 }
 
-int run(Ort::Session &session, int warmup_rounds, int run_rounds)
+int run(Ort::Session &session, int nums_warmup, int num_runs)
 {
     LOG(INFO) <<"=================================\t"<<"Runtime Info"<<"\t=================================";
     std::vector<Ort::AllocatedStringPtr> ptrs;
@@ -119,7 +120,7 @@ int run(Ort::Session &session, int warmup_rounds, int run_rounds)
 
     double warmup_time = 0;
     MyTimer timer = MyTimer();
-    for (int i = 0; i < warmup_rounds; i++)
+    for (int i = 0; i < nums_warmup; i++)
     {
         std::vector<const char *> input_names_ptr;
         std::vector<const char *> output_names_ptr;
@@ -137,9 +138,9 @@ int run(Ort::Session &session, int warmup_rounds, int run_rounds)
         timer.end();
         warmup_time = warmup_time + timer.get_time();
     }
-    double latency_avg = 0, latency_std = 0;
+     double latency_avg = 0, latency_std = 0,latency_max=DBL_MIN,latency_min=DBL_MAX;
     std::vector<double> latency_per_rounds;
-    for (int i = 0; i < run_rounds; i++)
+    for (int i = 0; i < num_runs; i++)
     {
         std::vector<const char *> input_names_ptr;
         std::vector<const char *> output_names_ptr;
@@ -155,10 +156,12 @@ int run(Ort::Session &session, int warmup_rounds, int run_rounds)
         auto output_tensors = session.Run(Ort::RunOptions{nullptr}, input_names_ptr.data(), input_tensors.data(), input_count, output_names_ptr.data(), output_count);
         timer.end();
         latency_per_rounds.push_back(timer.get_time());
+         latency_max = timer.get_time() > latency_max ? timer.get_time() : latency_max;
+        latency_min = timer.get_time() < latency_min ? timer.get_time() : latency_min;
     }
     calc_std_deviation(latency_per_rounds, latency_per_rounds.size(), latency_avg, latency_std);
-    LOG(INFO) << "warmup: " << warmup_rounds << " rounds, avg time: " << warmup_time * 1.0 / warmup_rounds << " ms";
-    LOG(INFO) << "run: " << run_rounds << " rounds, avg time: " << latency_avg << " ms, std: " << latency_std << " ms";
+    LOG(INFO) << "warmup: " << nums_warmup << " rounds, avg time: " << warmup_time * 1.0 / nums_warmup << " ms";
+    LOG(INFO) << "run: " << num_runs << " rounds, min: "<<latency_min<<" ms, max: "<<latency_max <<" ms, avg : " << latency_avg << " ms, std: " << latency_std << " ms";
     return 0;
 }
 

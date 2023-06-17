@@ -57,7 +57,7 @@ adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/build/ort_bench
 adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/models/fusenet_large-opset16.onnx /data/local/tmp/mobifuse/models
 
 # 5. 执行adb shell指令,backend cpu
-adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/mobifuse/libs" && /data/local/tmp/mobifuse/ort_benchmark --graph="/data/local/tmp/mobifuse/models/fusenet_large-opset16.onnx" --backend=cpu --nums_warmup=10 --num_runs=30 --num_threads=4'
+adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/mobifuse/libs" && /data/local/tmp/mobifuse/ort_benchmark --graph="/data/local/tmp/mobifuse/models/fusenet_large-opset16.onnx" --backend=arm --nums_warmup=10 --num_runs=30 --num_threads=4'
 
 # 5. 执行adb shell指令,backend nnapi
 adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/mobifuse/libs" && /data/local/tmp/mobifuse/ort_benchmark --graph="/data/local/tmp/mobifuse/models/fusenet_large-opset16.onnx" --backend=nnapi --nums_warmup=10 --num_runs=30 --num_threads=4 --enable_op_profiling=true --prefix="/data/local/tmp/mobifuse/nnapi"'
