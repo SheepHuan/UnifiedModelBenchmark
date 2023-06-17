@@ -19,7 +19,7 @@ make install
 ## opencv for android
 ```bash
 # 下载opencv 4.7.0
-export https_proxy="http://172.16.101.124:7890"
+export https_proxy="http://172.16.101.180:7890"
 wget https://codeload.github.com/opencv/opencv/zip/refs/tags/4.7.0
 ```
 ### 环境准备
@@ -69,10 +69,47 @@ cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake \
 -DBUILD_ANDROID_EXAMPLES=OFF \
 -DCMAKE_BUILD_TYPE=Release  \
 -DBUILD_JAVA=OFF  \
+-DBUILD_ANDROID_PROJECTS=OFF \
+-DBUILD_DOCS=off \
+-DBUILD_FAT_JAVA_LIB=off \
+-DBUILD_opencv_calib3d=off \
+-DBUILD_opencv_contrib=off \
+-DBUILD_opencv_features2d=off \
+-DBUILD_opencv_flann=off \
+-DBUILD_opencv_gpu=off \
+-DBUILD_opencv_java=off \
+-DBUILD_opencv_legacy=off \
+-DBUILD_opencv_ml=off \
+-DBUILD_opencv_nonfree=off \
+-DBUILD_opencv_objdetect=off \
+-DBUILD_opencv_ocl=off \
+-DBUILD_opencv_photo=off \
+-DBUILD_opencv_python=off \
+-DBUILD_opencv_stitching=off \
+-DBUILD_opencv_superres=off \
+-DBUILD_opencv_ts=off \
+-DBUILD_PERF_TESTS=OFF \
+-DBUILD_TESTS=OFF \
+-DBUILD_opencv_dnn=off \
+-DWITH_1394=off \
+-DWITH_EIGEN=off \
+-DWITH_FFMPEG=off \
+-DWITH_GIGEAPI=off \
+-DWITH_GSTREAMER=off \
+-DWITH_GTK=off \
+-DWITH_PVAPI=off \
+-DWITH_V4L=off \
+-DWITH_LIBV4L=off \
+-DWITH_CUDA=off \
+-DWITH_CUFFT=off \
+-DWITH_OPENCL=off \
+-DWITH_OPENCLAMDBLAS=off \
+-DWITH_OPENCLAMDFFT=off \
+-DBUILD_opencv_world=off \
 -DANDROID_ABI=arm64-v8a \
 -DANDROID_STL=c++_shared \
 -DBUILD_SHARED_LIBS=ON \
--DCMAKE_INSTALL_PREFIX=/workspace/opencv-4.7.0/build/install ..
+-DCMAKE_INSTALL_PREFIX=/root/workspace/UnifiedModelBenchmark/3rd-party/opencv/install ..
 # 编译好的库再install目录里面
 make -j8
 make install
