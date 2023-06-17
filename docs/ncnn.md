@@ -13,7 +13,7 @@ make -j16
 
 
 ## android编译ncnn
-
+https://github.com/Tencent/ncnn/wiki/vulkan-notes
 
 
 ```bash
@@ -39,6 +39,20 @@ cmake -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK/build/cmake/android.toolchain.cmake" 
 make -j16
 make install
 
+
+mkdir -p build-android-aarch64-vulkan
+cd build-android-aarch64-vulkan
+
+export ANDROID_NDK=/root/android_sdk/ndk/25.0.8775105
+
+# If you want to enable Vulkan, platform api version >= android-24 is needed
+cmake -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK/build/cmake/android.toolchain.cmake" \
+    -DANDROID_ABI="arm64-v8a" \
+    -DANDROID_PLATFORM=android-29 \
+    -DNCNN_VULKAN=ON \
+    -DNCNN_SHARED_LIB=ON ..
+make -j16
+make install
 ```
 
 

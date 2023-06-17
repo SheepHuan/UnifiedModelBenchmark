@@ -9,6 +9,9 @@
 #include "mutils/profile.hpp"
 #include "mutils/timer.hpp"
 #include "cpu.h"
+#include "gpu.h"
+#include <float.h>
+#include <math.h>
 DEFINE_string(graph, "", "ncnn model path");
 DEFINE_string(param, "", "ncnn param path");
 DEFINE_string(backend, "arm", "arm,opencl,vulkan");
@@ -83,7 +86,9 @@ std::unordered_map<std::string, std::vector<int>> parse_shape_info(std::string i
 
     return dict;
 }
-
+static ncnn::VulkanDevice *g_vkdev = 0;
+static ncnn::VkAllocator *g_blob_vkallocator = 0;
+static ncnn::VkAllocator *g_staging_vkallocator = 0;
 void run(const char *model_path, const char *param_path,
          std::unordered_map<std::string, std::vector<int>> input_info, std::unordered_map<std::string, std::vector<int>> output_info,
          int nums_warmup, int num_runs,
@@ -94,6 +99,15 @@ void run(const char *model_path, const char *param_path,
               << "\t=================================";
     ncnn::Net net;
     net.opt = opt;
+
+    if (net.opt.use_vulkan_compute)
+    {
+
+        g_blob_vkallocator->clear();
+        g_staging_vkallocator->clear();
+        net.set_vulkan_device(g_vkdev);
+    }
+
     // NOTE 这里必须先加载param，再加载bin
     if (net.load_param(param_path) == -1)
     {
@@ -103,6 +117,7 @@ void run(const char *model_path, const char *param_path,
     {
         LOG(ERROR) << "fail load graph: " << model_path;
     }
+
     const std::vector<const char *> input_names = net.input_names();
     const std::vector<const char *> output_names = net.output_names();
     const std::vector<ncnn::Mat> input_mats;
@@ -125,7 +140,7 @@ void run(const char *model_path, const char *param_path,
 
     MyTimer timer = MyTimer();
     double warmup_time = 0;
-    double latency_avg = 0, latency_std = 0;
+    double latency_avg = 0, latency_std = 0,latency_max=DBL_MIN,latency_min=DBL_MAX;
     std::vector<double> latency_per_rounds;
     for (int i = 0; i < nums_warmup; i++)
     {
@@ -169,10 +184,12 @@ void run(const char *model_path, const char *param_path,
         }
         timer.end();
         latency_per_rounds.push_back(timer.get_time());
+        latency_max = timer.get_time() > latency_max ? timer.get_time() : latency_max;
+        latency_min = timer.get_time() < latency_min ? timer.get_time() : latency_min;
     }
     calc_std_deviation(latency_per_rounds, latency_per_rounds.size(), latency_avg, latency_std);
     LOG(INFO) << "warmup: " << nums_warmup << " rounds, avg time: " << warmup_time * 1.0 / nums_warmup << " ms";
-    LOG(INFO) << "run: " << num_runs << " rounds, avg time: " << latency_avg << " ms, std: " << latency_std << " ms";
+    LOG(INFO) << "run: " << num_runs << " rounds, min: "<<latency_min<<" ms, max: "<<latency_max <<" ms, avg : " << latency_avg << " ms, std: " << latency_std << " ms";
 }
 
 int main(int argc, char **argv)
@@ -189,8 +206,6 @@ int main(int argc, char **argv)
     std::string output_info = FLAGS_output_info;
     std::unordered_map<std::string, std::vector<int>> input_info_dict = parse_shape_info(input_info);
     std::unordered_map<std::string, std::vector<int>> output_info_dict = parse_shape_info(output_info);
-
-    bool use_vulkan_compute = backend == "vulkan";
 
     print_args();
 
@@ -210,7 +225,7 @@ int main(int argc, char **argv)
     opt.use_winograd_convolution = true;
     opt.use_sgemm_convolution = true;
     opt.use_int8_inference = true;
-    opt.use_vulkan_compute = use_vulkan_compute;
+
     opt.use_fp16_packed = true;
     opt.use_fp16_storage = true;
     opt.use_fp16_arithmetic = true;
@@ -222,15 +237,19 @@ int main(int argc, char **argv)
 
     if (backend == "arm")
     {
+        opt.use_vulkan_compute = false;
         run(model_path.c_str(), param_path.c_str(), input_info_dict, output_info_dict, nums_warmup, num_runs, opt);
-    }
-    else if (backend == "opencl")
-    {
-        LOG(WARNING) << "opencl backend is not avaliable now!";
     }
     else if (backend == "vulkan")
     {
-        LOG(WARNING) << "vulkan backend is not avaliable now!";
+        opt.use_vulkan_compute = true;
+        g_vkdev = ncnn::get_gpu_device(0);
+        g_blob_vkallocator = new ncnn::VkBlobAllocator(g_vkdev);
+        g_staging_vkallocator = new ncnn::VkStagingAllocator(g_vkdev);
+        opt.blob_vkallocator = g_blob_vkallocator;
+        opt.workspace_vkallocator = g_blob_vkallocator;
+        opt.staging_vkallocator = g_staging_vkallocator;
+        run(model_path.c_str(), param_path.c_str(), input_info_dict, output_info_dict, nums_warmup, num_runs, opt);
     }
     else
     {

@@ -55,7 +55,7 @@ elseif(TARGET_OS STREQUAL "android")
             "${CMAKE_SOURCE_DIR}/include/glslang"
         )
         link_directories(
-            "${CMAKE_SOURCE_DIR}/3rd-party/ncnn/build-android-aarch64/install/lib"
+            "${CMAKE_SOURCE_DIR}/3rd-party/ncnn/build-android-aarch64-vulkan/install/lib"
             )        
     endif()
 endif()
