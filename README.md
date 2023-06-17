@@ -67,6 +67,19 @@ adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/m
 
 
 ### 2.2 ncnn 运行 .onnx
+
+#### 2.2.1 ncnn_benchmark 参数解释
+- `graph`, 模型图`*.bin`的路径.
+- `param`, 模型参数`*.param`的路径.
+- `backend`, ort的推理后端,默认`arm`,可选`arm`,`vulkan`.
+- `num_threads`, ort的后端为`arm`的时候，可以选择CPU推理数量`1,..,4,..,8`
+- `nums_warmup`, 热身次数，不参与计时.
+- `num_runs`, 推理次数.
+- `input_info`, 输入张量的信息格式为"input1:1x3x128x128,input2:1x4x56x56".支持多输入
+- `output_info`, 输出张量的信息格式为:"output1:1x7x128x128,output2:1x4x128x128".支持多输出.
+
+
+#### 2.2.2 demo
 ```bash
 # 1. 创建libs,models文件夹
 adb -s 3a9c4f5 shell "mkdir -p /data/local/tmp/mobifuse /data/local/tmp/mobifuse/libs /data/local/tmp/mobifuse/models"
