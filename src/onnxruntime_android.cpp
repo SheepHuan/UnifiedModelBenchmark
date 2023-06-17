@@ -191,7 +191,7 @@ int main(int argc, char **argv)
     }
     else if (backend == "nnapi")
     {
-        LOG(WARNING) << "flags for ort nnapi ep: NNAPI_FLAG_CPU_DISABLED, NNAPI_FLAG_USE_FP16";
+        LOG(WARNING) << "flags for ort nnapi ep: NNAPI_FLAG_CPU_DISABLED";
          /*
             这里可以设置文档地址(https://onnxruntime.ai/docs/execution-providers/NNAPI-ExecutionProvider.html)，例如下:
             nnapi_flags |= NNAPI_FLAG_USE_FP16;
@@ -199,7 +199,7 @@ int main(int argc, char **argv)
         #ifdef ANDROID_PLATFORM
                 uint32_t nnapi_flags = 0;
                 nnapi_flags |= NNAPI_FLAG_CPU_DISABLED;
-                nnapi_flags |= NNAPI_FLAG_USE_FP16;
+                // nnapi_flags |= NNAPI_FLAG_USE_FP16;
                 Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_Nnapi(session_options, nnapi_flags));
         #else
                 LOG(ERROR)<<"Current Complier is not for android!";
