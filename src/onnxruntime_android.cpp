@@ -18,7 +18,7 @@ DEFINE_string(graph, "", "onnx model path");
 DEFINE_int32(nums_warmup, 3, "nums_warmup");
 DEFINE_int32(num_runs, 10, "num_runs");
 DEFINE_int32(num_threads, 2, "num_threads");
-DEFINE_string(backend, "arm", "arm,nnapi");
+DEFINE_string(backend, "cpu", "cpu,nnapi");
 DEFINE_bool(enable_op_profiling, false, "enable_op_profiling");
 DEFINE_string(prefix, "", "result");
 
@@ -36,7 +36,7 @@ void print_args()
 
     LOG(INFO) << "model path: " << model_path;
     LOG(INFO) << "backend: " << backend;
-    if (backend == "arm")
+    if (backend == "cpu")
     {
         LOG(INFO) << "cpu threads: " << num_threads;
     }
@@ -188,7 +188,7 @@ int main(int argc, char **argv)
     session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
 
     Ort::Session session{env, model_path.c_str(), session_options}; // CPU
-    if (backend == "arm")
+    if (backend == "cpu")
     {
         run(session, nums_warmup, num_runs);
     }

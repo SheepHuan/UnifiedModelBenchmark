@@ -57,7 +57,11 @@ adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/build/ort_bench
 adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/models/fusenet_large-opset16.onnx /data/local/tmp/mobifuse/models
 
 # 5. 执行adb shell指令,backend cpu
-adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/mobifuse/libs" && /data/local/tmp/mobifuse/ort_benchmark --graph="/data/local/tmp/mobifuse/models/fusenet_large-opset16.onnx" --backend=arm --nums_warmup=10 --num_runs=30 --num_threads=4'
+adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/mobifuse/libs" && /data/local/tmp/mobifuse/ort_benchmark --graph="/data/local/tmp/mobifuse/models/fusenet_large-opset16_simple.onnx" --backend=arm --nums_warmup=10 --num_runs=50 --num_threads=4'
+
+adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/mobifuse/libs" && /data/local/tmp/mobifuse/ort_benchmark --graph="/data/local/tmp/mobifuse/models/fusenet_middle-opset16_simple.onnx" --backend=arm --nums_warmup=10 --num_runs=50 --num_threads=4'
+
+adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/mobifuse/libs" && /data/local/tmp/mobifuse/ort_benchmark --graph="/data/local/tmp/mobifuse/models/fusenet_small_reparameterized-opset16_simple.onnx" --backend=arm --nums_warmup=10 --num_runs=50 --num_threads=4'
 
 # 5. 执行adb shell指令,backend nnapi
 adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/mobifuse/libs" && /data/local/tmp/mobifuse/ort_benchmark --graph="/data/local/tmp/mobifuse/models/fusenet_large-opset16.onnx" --backend=nnapi --nums_warmup=10 --num_runs=30 --num_threads=4 --enable_op_profiling=true --prefix="/data/local/tmp/mobifuse/nnapi"'
@@ -80,6 +84,18 @@ adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/m
 
 
 #### 2.2.2 demo
+```
+onnxsim models/fusenet_middle-opset16.onnx models/fusenet_middle-opset16_simple.onnx
+onnxsim models/fusenet_small_reparameterized-opset16.onnx models/fusenet_small_reparameterized-opset16_simple.onnx
+
+./3rd-party/ncnn/build/tools/onnx/onnx2ncnn models/fusenet_middle-opset16_simple.onnx models/fusenet_middle_simple.param  models/fusenet_middle_simple.bin
+
+./3rd-party/ncnn/build/tools/onnx/onnx2ncnn models/fusenet_small_reparameterized-opset16_simple.onnx models/fusenet_small_simple.param  models/fusenet_small_simple.bin
+
+adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/models/fusenet_large* /data/local/tmp/mobifuse/models
+```
+
+
 ```bash
 # 1. 创建libs,models文件夹
 adb -s 3a9c4f5 shell "mkdir -p /data/local/tmp/mobifuse /data/local/tmp/mobifuse/libs /data/local/tmp/mobifuse/models"
@@ -94,7 +110,11 @@ adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/build/ncnn_benc
 adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/models/fusenet_large_simple.bin /data/local/tmp/mobifuse/models
 adb -s 3a9c4f5 push --sync /root/workspace/UnifiedModelBenchmark/models/fusenet_large_simple.param /data/local/tmp/mobifuse/models
 # 5. 执行adb shell指令, arm cpu
-adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/mobifuse/libs" && /data/local/tmp/mobifuse/ncnn_benchmark --graph="/data/local/tmp/mobifuse/models/fusenet_large_simple.bin" --param="/data/local/tmp/mobifuse/models/fusenet_large_simple.param" --nums_warmup=10 --num_runs=30 --num_threads=4 --input_info="input:1x4x128x128" --output_info="output:1x7x128x128,feat_out:1x4x128x128"'
+adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/mobifuse/libs" && /data/local/tmp/mobifuse/ncnn_benchmark --graph="/data/local/tmp/mobifuse/models/fusenet_large_simple.bin" --param="/data/local/tmp/mobifuse/models/fusenet_large_simple.param" --nums_warmup=10 --num_runs=50 --num_threads=4 --input_info="input:1x4x128x128" --output_info="output:1x7x128x128,feat_out:1x4x128x128" --backend=vulkan'
+
+adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/mobifuse/libs" && /data/local/tmp/mobifuse/ncnn_benchmark --graph="/data/local/tmp/mobifuse/models/fusenet_middle_simple.bin" --param="/data/local/tmp/mobifuse/models/fusenet_middle_simple.param" --nums_warmup=10 --num_runs=50 --num_threads=4 --input_info="input:1x4x128x128" --output_info="output:1x7x128x128,feat_out:1x4x128x128" --backend=vulkan'
+
+adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/mobifuse/libs" && /data/local/tmp/mobifuse/ncnn_benchmark --graph="/data/local/tmp/mobifuse/models/fusenet_small_simple.bin" --param="/data/local/tmp/mobifuse/models/fusenet_small_simple.param" --nums_warmup=10 --num_runs=50 --num_threads=4 --input_info="input:1x4x128x128"  --output_info="output:1x7x128x128,feat_out:1x4x128x128" --backend=vulkan'
 
 # 5. 执行adb shell指令, vulkan gpu
 adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/mobifuse/libs" && /data/local/tmp/mobifuse/ncnn_benchmark --graph="/data/local/tmp/mobifuse/models/fusenet_large_simple.bin" --param="/data/local/tmp/mobifuse/models/fusenet_large_simple.param" --nums_warmup=10 --num_runs=30 --num_threads=4 --backend=vulkan --input_info="input:1x4x128x128" --output_info="output:1x7x128x128,feat_out:1x4x128x128"'
