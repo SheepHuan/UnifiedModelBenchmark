@@ -11,8 +11,8 @@ using namespace paddle::lite_api;
 
 DEFINE_string(graph, "", "paddlelite model path");
 DEFINE_bool(graph_is_dir, false, "graph_is_dir");
-DEFINE_string(backend, "arm", "use mobile opencl, otherwise use arm cpu");
-DEFINE_int32(nums_warmnup, 3, "warmup_runs");
+DEFINE_string(backend, "cpu", "use mobile opencl, otherwise use arm cpu");
+DEFINE_int32(warmup_runs, 3, "warmup_runs");
 DEFINE_int32(nums_run, 10, "num runs");
 DEFINE_int32(num_threads, 4, "num threads");
 DEFINE_int32(cpu_power_mode, 0, "cpu power mode");
@@ -87,7 +87,7 @@ void run(std::shared_ptr<PaddlePredictor> predictor, int warmup_runs, int num_ru
     }
     calc_std_deviation(warmup_latency_per_rounds, warmup_latency_per_rounds.size(), warmup_latency_avg, warmup_latency_std);
     calc_std_deviation(latency_per_rounds, latency_per_rounds.size(), latency_avg, latency_std);
-    printf("warmup: %d rounds, avg time: %f ms, std: %f ms\nrun: %d rounds, avg time: %f ms, std: %f ms\n", warmup_runs,warmup_latency_avg,warmup_latency_std, num_runs, latency_avg, latency_std);
+    printf("warmup: %d rounds, avg time: %f us, std: %f us\nrun: %d rounds, avg time: %f us, std: %f us\n", warmup_runs,warmup_latency_avg,warmup_latency_std, num_runs, latency_avg, latency_std);
 
     std::vector<std::string> output_names = predictor->GetOutputNames();
     for (int i = 0; i < output_names.size(); i++)
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
     int num_threads = FLAGS_num_threads;
     num_threads = std::min(num_threads, 8);
     std::string backend = FLAGS_backend;
-    int nums_warmup = FLAGS_nums_warmnup;
+    int nums_warmup = FLAGS_warmup_runs;
     int num_runs = FLAGS_nums_run;
     mlog::info("graph", model_graph);
     mlog::info("num_threads:", std::to_string(num_threads));
@@ -136,7 +136,7 @@ int main(int argc, char **argv)
         // config.set_model_from_file(model_graph);
     }
     std::vector<Place> valid_places;
-    if (backend == "arm")
+    if (backend == "cpu")
     {
         valid_places.emplace_back(Place{TARGET(kARM), PRECISION(kFloat)});
         config.set_threads(num_threads);

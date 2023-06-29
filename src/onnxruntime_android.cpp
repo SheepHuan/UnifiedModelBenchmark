@@ -160,8 +160,8 @@ int run(Ort::Session &session, int nums_warmup, int num_runs)
         latency_min = timer.get_time() < latency_min ? timer.get_time() : latency_min;
     }
     calc_std_deviation(latency_per_rounds, latency_per_rounds.size(), latency_avg, latency_std);
-    LOG(INFO) << "warmup: " << nums_warmup << " rounds, avg time: " << warmup_time * 1.0 / nums_warmup << " ms";
-    LOG(INFO) << "run: " << num_runs << " rounds, min: "<<latency_min<<" ms, max: "<<latency_max <<" ms, avg: " << latency_avg << " ms, std: " << latency_std << " ms";
+    LOG(INFO) << "warmup: " << nums_warmup << " rounds, avg time: " << warmup_time * 1.0 / nums_warmup << " us";
+    LOG(INFO) << "run: " << num_runs << " rounds, min: "<<latency_min<<" us, max: "<<latency_max <<" us, avg: " << latency_avg << " us, std: " << latency_std << " us";
     return 0;
 }
 

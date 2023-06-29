@@ -24,6 +24,6 @@ void MyTimer::end(){
 }
 
 double MyTimer::get_time(){
-    auto time_span = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+    auto time_span = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
     return time_span.count();
 }
