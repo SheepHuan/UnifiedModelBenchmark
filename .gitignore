@@ -9,6 +9,6 @@ scripts/*.json
 scripts/*.xlsx
 tmp/
 *.json
-
+*.zip
 3rd-party/
-releasev1/
+release/

@@ -60,8 +60,6 @@ elseif(TARGET_OS STREQUAL "android")
             )        
     endif()
 endif()
-
-add_library(math STATIC ${MATH_SRC})
 if (TARGET_FRAMEWROK STREQUAL "onnxruntime")
         set(APP_NAME ort_benchmark)
         # 构建可执行文件
@@ -75,7 +73,6 @@ if (TARGET_FRAMEWROK STREQUAL "onnxruntime")
             ${APP_NAME} 
             ${OrtLib}
             gflags::gflags
-            easyloggingpp
         )
 elseif(TARGET_FRAMEWROK STREQUAL "paddlelite")
     set(APP_NAME paddlelite_benchmark)

@@ -15,7 +15,7 @@
 #include "mutils/timer.hpp"
 #include <float.h>
 DEFINE_string(graph, "", "onnx model path");
-DEFINE_int32(nums_warmup, 3, "nums_warmup");
+DEFINE_int32(warmup_runs, 3, "warmup_runs");
 DEFINE_int32(num_runs, 10, "num_runs");
 DEFINE_int32(num_threads, 2, "num_threads");
 DEFINE_string(backend, "cpu", "cpu,nnapi");
@@ -31,7 +31,7 @@ void print_args()
     bool enable_op_profiling = FLAGS_enable_op_profiling;
     std::string result_prefix = FLAGS_prefix;
     int num_threads = FLAGS_num_threads;
-    int nums_warmup = FLAGS_nums_warmup;
+    int nums_warmup = FLAGS_warmup_runs;
     int num_runs = FLAGS_num_runs;
 
     LOG(INFO) << "model path: " << model_path;
@@ -161,7 +161,7 @@ int run(Ort::Session &session, int nums_warmup, int num_runs)
     }
     calc_std_deviation(latency_per_rounds, latency_per_rounds.size(), latency_avg, latency_std);
     LOG(INFO) << "warmup: " << nums_warmup << " rounds, avg time: " << warmup_time * 1.0 / nums_warmup << " ms";
-    LOG(INFO) << "run: " << num_runs << " rounds, min: "<<latency_min<<" ms, max: "<<latency_max <<" ms, avg : " << latency_avg << " ms, std: " << latency_std << " ms";
+    LOG(INFO) << "run: " << num_runs << " rounds, min: "<<latency_min<<" ms, max: "<<latency_max <<" ms, avg: " << latency_avg << " ms, std: " << latency_std << " ms";
     return 0;
 }
 
@@ -174,7 +174,7 @@ int main(int argc, char **argv)
     bool enable_op_profiling = FLAGS_enable_op_profiling;
     std::string result_prefix = FLAGS_prefix;
     int num_threads = FLAGS_num_threads;
-    int nums_warmup = FLAGS_nums_warmup;
+    int nums_warmup = FLAGS_warmup_runs;
     int num_runs = FLAGS_num_runs;
 
     print_args();
