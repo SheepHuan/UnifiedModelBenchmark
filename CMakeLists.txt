@@ -44,10 +44,12 @@ elseif(TARGET_OS STREQUAL "android")
     elseif(TARGET_FRAMEWROK STREQUAL "paddlelite")
         include_directories(
             "${CMAKE_SOURCE_DIR}/include"
-            "${CMAKE_SOURCE_DIR}/include/paddlelite"
+            "${CMAKE_SOURCE_DIR}/3rd-party/Paddle-Lite/build.lite.android.armv8.clang/inference_lite_lib.android.armv8.opencl/cxx/include"
+            
         )
         link_directories(
             "${CMAKE_SOURCE_DIR}/3rd-party/Paddle-Lite/build.lite.android.armv8.clang/inference_lite_lib.android.armv8.opencl/cxx/lib"
+       
             )
     elseif(TARGET_FRAMEWROK STREQUAL "ncnn")
         include_directories(
@@ -76,14 +78,18 @@ if (TARGET_FRAMEWROK STREQUAL "onnxruntime")
         )
 elseif(TARGET_FRAMEWROK STREQUAL "paddlelite")
     set(APP_NAME paddlelite_benchmark)
-    add_executable(${APP_NAME} "src/paddlelite_android.cpp")
-    set(PaddleLiteLib
-    # paddle_full_api_shared
-    paddle_full_api_shared)
+    add_executable(${APP_NAME} 
+    "src/paddlelite_android.cpp"
+    "src/easylogging++.cc"
+    )
+    set(PaddleLiteLib "paddle_full_api_shared")
+    # set(PaddleLiteLib "paddle_api_full_bundled")
+  
     target_link_libraries(
-        ${APP_NAME} 
-        ${PaddleLiteLib}
+        ${APP_NAME}
         gflags::gflags
+        ${PaddleLiteLib}
+        
         )
 elseif(TARGET_FRAMEWROK STREQUAL "ncnn")
 set(APP_NAME ncnn_benchmark)

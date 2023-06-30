@@ -126,15 +126,28 @@ adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/m
 ### 2.3 paddlelite 运行 .pb
 https://www.paddlepaddle.org.cn/lite/v2.12/user_guides/opt/opt_python.html
 ```bash
-adb -s 3a9c4f5 push 3rd-party/Paddle-Lite/build.lite.android.armv8.clang/inference_lite_lib.android.armv8.opencl/cxx/lib/*.so /data/local/tmp/hcp/libs
+adb -s 3a9c4f5 push 3rd-party/Paddle-Lite/build.lite.android.armv8.clang/inference_lite_lib.android.armv8.opencl/cxx/lib/* /data/local/tmp/hcp/libs
 adb -s 3a9c4f5 push models/mobilenet_v1_opt.nb /data/local/tmp/hcp/
 
 adb -s 3a9c4f5 push build/aiot_benchmark /data/local/tmp/hcp/
-adb -s 3a9c4f5 shell "chmod +x /data/local/tmp/hcp/aiot_benchmark"
+
 
 adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/aiot_benchmark --graph="/data/local/tmp/hcp/MobileNetV1" --graph_is_dir=true --nums_warmnup=50 --nums_run=50 --num_threads=1 --cpu_power_mode=0 --backend=arm --input_shape=1,3,224,224'
 
-adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/aiot_benchmark --graph="/data/local/tmp/hcp/MobileNetV1" --graph_is_dir=true --nums_warmnup=15 --nums_run=50 --num_threads=1 --cpu_power_mode=0 --backend=opencl --input_shape=1,3,224,224'
+adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/aiot_benchmark --graph="/data/local/tmp/hcp/MobileNetV1" --graph_is_dir=true --nums_warmnup=50 --nums_run=50 --num_threads=1 --cpu_power_mode=0 --backend=arm --input_shape=1,3,224,224'
+
+export adb_device="3a9c4f5"
+adb -s $adb_device push /root/workspace/new/nn-Meter/workspace/models/resnet50-v1_opt.nb /data/local/tmp/hcp/models
+adb -s $adb_device push /root/workspace/UnifiedModelBenchmark/build/paddlelite_benchmark /data/local/tmp/hcp/
+adb -s $adb_device shell "chmod +x /data/local/tmp/hcp/paddlelite_benchmark"
+adb -s $adb_device push /root/workspace/UnifiedModelBenchmark/3rd-party/Paddle-Lite/build.lite.android.armv8.clang/inference_lite_lib.android.armv8/cxx/lib/*.so /data/local/tmp/hcp/libs
+
+adb -s  $adb_device shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/paddlelite_benchmark --graph="/data/local/tmp/hcp/models/resnet50-v1_opt.nb" --graph_is_dir=false --nums_warmnup=15 --nums_run=50 --num_threads=1 --cpu_power_mode=0 --backend=arm --input_info="data":1x3x224x224'
+
+adb -s  $adb_device shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/paddlelite_benchmark --graph="/data/local/tmp/hcp/models/resnet50-v1_opt.nb" --nums_warmnup=15 --nums_run=50 --num_threads=1 --cpu_power_mode=0 --backend=arm --input_info="data":1x3x224x224'
+
+
+adb -s  $adb_device shell 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs && /data/local/tmp/hcp/paddlelite_benchmark'
 
 adb -s 3a9c4f5 shell 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs" && /data/local/tmp/hcp/aiot_benchmark'
 

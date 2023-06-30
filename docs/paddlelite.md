@@ -13,11 +13,24 @@ apt install curl -y
 # 因为sdk里面的NDK命名时版本号,paddlite的脚本不识别
 export NDK_ROOT=/root/tmp/android-ndk-r25c
 
+
+
 # 2. 切入分支 2.13
 git checkout release/v2.12
+git clone -b v2.13-rc https://github.com/PaddlePaddle/Paddle-Lite.git
 # 3. (可选) 删除 third-party 目录，编译脚本会自动从国内 CDN 下载第三方库文件
 rm -rf third-party
 # 4. 编译CPU+OPENCL库 ,--with_benchmark
+
+
+./lite/tools/build_android.sh \
+--arch=armv8 \
+--toolchain=clang \
+--with_java=OFF \
+--with_profile=ON \
+full_publish
+
+
 bash lite/tools/build_android.sh \
 --arch=armv8 \
 --toolchain=clang \
@@ -29,23 +42,17 @@ bash lite/tools/build_android.sh \
 --with_extra=ON \
 --with_opencl=ON
 
+
 bash lite/tools/build_android.sh \
 --arch=armv8 \
 --toolchain=clang \
 --android_stl=c++_shared \
 --with_java=OFF \
 --with_profile=ON \
---android_api_level=27 \
---with_arm82_fp16=ON \
 --with_extra=ON \
---with_opencl=ON full_publish
-
-bash lite/tools/build_android.sh \
---arch=armv8 \
---toolchain=clang \
---android_stl=c++_shared \
---with_profile=ON \
---android_api_level=27 full_publish
+--android_api_level=21 \
+--with_opencl=ON \
+full_publish
 ```
 
 

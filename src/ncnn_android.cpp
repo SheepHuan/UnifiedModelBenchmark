@@ -2,10 +2,8 @@
 #include "ncnn/blob.h"
 #include <gflags/gflags.h>
 #include "easylogging++.h"
-#include <vector>
-#include <sstream>
-#include <unordered_map>
 #include <iostream>
+#include "mutils/args.hpp"
 #include "mutils/profile.hpp"
 #include "mutils/timer.hpp"
 #include "cpu.h"
@@ -63,29 +61,7 @@ std::vector<int64_t> read_shape(std::string shape_str)
     return shape;
 }
 
-std::unordered_map<std::string, std::vector<int>> parse_shape_info(std::string input_str)
-{
-    std::istringstream iss(input_str);
-    std::unordered_map<std::string, std::vector<int>> dict;
 
-    std::string token;
-    while (std::getline(iss, token, ','))
-    {
-        std::istringstream iss2(token);
-        std::string key;
-        std::getline(iss2, key, ':');
-
-        std::vector<int> values;
-        std::string value_str;
-        while (std::getline(iss2, value_str, 'x'))
-        {
-            values.push_back(std::stoi(value_str));
-        }
-        dict[key] = values;
-    }
-
-    return dict;
-}
 static ncnn::VulkanDevice *g_vkdev = 0;
 static ncnn::VkAllocator *g_blob_vkallocator = 0;
 static ncnn::VkAllocator *g_staging_vkallocator = 0;
