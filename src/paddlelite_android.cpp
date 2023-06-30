@@ -16,7 +16,7 @@ using namespace paddle::lite_api;
 
 DEFINE_string(model, "", "paddlelite model path");
 DEFINE_string(param, "", "paddlelite param path");
-DEFINE_string(optimized_model_dir, "", "Optimized model dir.");
+DEFINE_string(optimized_model_path, "", "Optimized model dir.");
 DEFINE_string(backend, "arm", "use mobile opencl, otherwise use arm cpu");
 DEFINE_int32(warmup_runs, 3, "warmup_runs");
 DEFINE_int32(nums_run, 10, "num runs");
@@ -90,7 +90,7 @@ int main(int argc, char **argv)
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     std::string model_path = FLAGS_model;
     std::string param_path = FLAGS_param;
-    std::string optimized_model_dir = FLAGS_optimized_model_dir;
+    std::string optimized_model_path = FLAGS_optimized_model_path;
     int cpu_power_mode = FLAGS_cpu_power_mode;
     int num_threads = FLAGS_num_threads;
     num_threads = std::min(num_threads, 8);
@@ -106,7 +106,7 @@ int main(int argc, char **argv)
               << "\t=================================";
     LOG(INFO) << "model path: " << model_path;
     LOG(INFO) << "param path: " << param_path;
-    LOG(INFO) << "optimized model dir: " << optimized_model_dir;
+    LOG(INFO) << "optimized model dir: " << optimized_model_path;
     LOG(INFO) << "backend: " << backend;
     LOG(INFO) << "cpu threads: " << num_threads;
     LOG(INFO) << "nums_warmup: " << nums_warmup;
@@ -154,8 +154,8 @@ int main(int argc, char **argv)
         CreatePaddlePredictor<CxxConfig>(config);
 
     // 3. Save the optimized model
-    // predictor->SaveOptimizedModel(optimized_model_dir,
-    //                               LiteModelType::kNaiveBuffer);
+    predictor->SaveOptimizedModel(optimized_model_path,
+                                  LiteModelType::kNaiveBuffer);
     
     run(predictor, input_info_dict, nums_warmup, num_runs);
     return 0;

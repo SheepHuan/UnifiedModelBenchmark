@@ -17,4 +17,4 @@ adb -s $adb_device shell "cd $workspace;
   --param=$workspace/models/MobileNetV1/inference.pdiparams\
   --input_info=inputs:1x3x224x224\
   --backend=arm\
-  --optimized_model_dir=/data/local/tmp/mobile"
+  --optimized_model_path=/data/local/tmp/mobile"

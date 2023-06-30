@@ -10,7 +10,7 @@
 #include "gpu.h"
 #include <float.h>
 #include <math.h>
-DEFINE_string(graph, "", "ncnn model path");
+DEFINE_string(model, "", "ncnn model path");
 DEFINE_string(param, "", "ncnn param path");
 DEFINE_string(backend, "arm", "arm,opencl,vulkan");
 DEFINE_int32(num_threads, 2, "num_threads");
@@ -22,7 +22,7 @@ INITIALIZE_EASYLOGGINGPP
 
 void print_args()
 {
-    std::string model_path = FLAGS_graph;
+    std::string model_path = FLAGS_model;
     std::string param_path = FLAGS_param;
     std::string backend = FLAGS_backend;
     int num_threads = FLAGS_num_threads;
@@ -172,7 +172,7 @@ int main(int argc, char **argv)
 {
     // 解析命令行参数
     gflags::ParseCommandLineFlags(&argc, &argv, true);
-    std::string model_path = FLAGS_graph;
+    std::string model_path = FLAGS_model;
     std::string param_path = FLAGS_param;
     std::string backend = FLAGS_backend;
     int num_threads = FLAGS_num_threads;

@@ -12,6 +12,7 @@ adb -s $adb_device shell "cd $workspace;
   ./benchmark_bin \
     --model_file=models/MobileNetV1/inference.pdmodel \
     --param_file=models/MobileNetV1/inference.pdiparams \
+    --optimized_model_path="/data/local/tmp/tmp" \
     --input_shape=1,3,224,224 \
     --warmup=10 \
     --repeats=20 \
