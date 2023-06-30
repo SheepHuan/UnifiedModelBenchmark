@@ -32,12 +32,12 @@ if (TARGET_OS STREQUAL "linux")
 elseif(TARGET_OS STREQUAL "android")
     add_definitions(-DANDROID_PLATFORM)
     if (TARGET_FRAMEWROK STREQUAL "onnxruntime")
-        include_directories(
+    include_directories(
         "${CMAKE_SOURCE_DIR}/include"
-        "${CMAKE_SOURCE_DIR}/include/onnxruntime"
-        "${CMAKE_SOURCE_DIR}/include/onnxruntime/core"
-        "${CMAKE_SOURCE_DIR}/include/onnxruntime/core/session"
-        )
+        "${CMAKE_SOURCE_DIR}/3rd-party/onnxruntime/include/onnxruntime"
+        "${CMAKE_SOURCE_DIR}/3rd-party/onnxruntime/include/onnxruntime/core"
+        "${CMAKE_SOURCE_DIR}/3rd-party/onnxruntime/include/onnxruntime/core/session"
+    )
         link_directories(
             "${CMAKE_SOURCE_DIR}/3rd-party/onnxruntime/build/Android/Release"
             )
@@ -82,9 +82,7 @@ elseif(TARGET_FRAMEWROK STREQUAL "paddlelite")
     "src/paddlelite_android.cpp"
     "src/easylogging++.cc"
     )
-    set(PaddleLiteLib "paddle_full_api_shared")
-    # set(PaddleLiteLib "paddle_api_full_bundled")
-  
+    set(PaddleLiteLib "paddle_full_api_shared")  
     target_link_libraries(
         ${APP_NAME}
         gflags::gflags

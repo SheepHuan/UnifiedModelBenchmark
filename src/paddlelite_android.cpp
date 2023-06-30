@@ -18,7 +18,7 @@ DEFINE_string(model, "", "paddlelite model path");
 DEFINE_string(param, "", "paddlelite param path");
 DEFINE_string(optimized_model_path, "", "Optimized model dir.");
 DEFINE_string(backend, "arm", "use mobile opencl, otherwise use arm cpu");
-DEFINE_int32(warmup_runs, 3, "warmup_runs");
+DEFINE_int32(nums_warmup, 3, "warmup_runs");
 DEFINE_int32(nums_run, 10, "num runs");
 DEFINE_int32(num_threads, 4, "num threads");
 DEFINE_int32(cpu_power_mode, 0, "power mode: "
@@ -95,7 +95,7 @@ int main(int argc, char **argv)
     int num_threads = FLAGS_num_threads;
     num_threads = std::min(num_threads, 8);
     std::string backend = FLAGS_backend;
-    int nums_warmup = FLAGS_warmup_runs;
+    int nums_warmup = FLAGS_nums_warmup;
     int num_runs = FLAGS_nums_run;
     std::string input_info = FLAGS_input_info;
     std::unordered_map<std::string, std::vector<int64_t>> input_info_dict = parse_shape_info_int64(input_info);
