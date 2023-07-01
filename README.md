@@ -21,7 +21,14 @@ cmake --build . --target ncnn_benchmark
 ## 2 使用
 
 ### onnxruntime benchmark
-
+#### 参数
+- `graph`, 模型图的路径.
+- `backend`, ort的推理后端,默认`arm`,可选`arm`,`nnapi`.
+- `num_threads`, ort的后端为`arm`的时候，可以选择CPU推理数量`1,..,4,..,8`
+- `nums_warmup`, 热身次数，不参与计时.
+- `num_runs`, 推理次数.
+- `enable_op_profiling`, 是否打开op profiling,这将会保存文件到当前目录,默认是`false`
+- `prefix`, 当`enable_op_profiling=true`时，可以设置`prefix`作为文件前缀，改变保存目录。
 
 ### paddlelite benchmark
 
