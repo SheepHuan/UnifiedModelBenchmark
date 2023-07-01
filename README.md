@@ -3,7 +3,7 @@
 ## 1 安装
 
 ### 编译benchmark
-准备好依赖后运行一下指令即可。准备依赖的[文档](builder/)
+准备好依赖后运行一下指令即可。准备依赖的[文档](docs/builder/README.md)
 ```bash
 # linux 交叉编译 android 可执行文件，要求先编译完依赖库onnxruntime.so paddlelite.so ncnn.so
 # 编译paddlelite benchmark
