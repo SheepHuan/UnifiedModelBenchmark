@@ -6,7 +6,7 @@
 #include <typeinfo>
 #include "log.hpp"
 #include <stdexcept>
-
+#include <assert.h>
 
 
 namespace huan

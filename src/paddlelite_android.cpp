@@ -19,7 +19,7 @@ DEFINE_string(param, "", "paddlelite param path");
 DEFINE_string(optimized_model_path, "", "Optimized model dir.");
 DEFINE_string(backend, "arm", "use mobile opencl, otherwise use arm cpu");
 DEFINE_int32(num_warmup, 3, "warmup_runs");
-DEFINE_int32(num_run, 10, "num runs");
+DEFINE_int32(num_runs, 10, "num runs");
 DEFINE_int32(num_threads, 4, "num threads");
 DEFINE_int32(cpu_power_mode, 0, "power mode: "
                                 "0 for POWER_HIGH;"
@@ -36,11 +36,13 @@ void run(std::shared_ptr<PaddlePredictor> predictor, huan::benchmark::MTensorDic
 
     std::vector<std::string> input_names = predictor->GetInputNames();
     int input_count = 0, output_count = 0;
+    assert(input_names.size() == input_tensors_info.inputs_info.size());
     for (int i = 0; i < input_names.size(); i++)
     {
         input_count++;
         std::unique_ptr<Tensor> input_tensor(std::move(predictor->GetInput(0)));
         LOG(INFO) << "input tensor: " << input_names[i];
+        LOG(INFO) << "input tensor: " << input_tensors_info.inputs_info[i].name;
         shape_t shape = input_tensors_info.query_pd_shape_info(input_names[i]); //input_info[input_names[i]];
         LOG(INFO) << "input tensor: " << shape.size();
         input_tensor->Resize(shape);
@@ -87,7 +89,7 @@ int main(int argc, char **argv)
     num_threads = std::min(num_threads, 8);
     std::string backend = FLAGS_backend;
     int nums_warmup = FLAGS_num_warmup;
-    int num_runs = FLAGS_num_run;
+    int num_runs = FLAGS_num_runs;
     std::string str_input_info = FLAGS_input_info;
     
     

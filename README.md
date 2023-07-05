@@ -38,7 +38,7 @@ cmake --build . --target ncnn_benchmark
 - `num_threads`, ort的后端为`arm`的时候，可以选择CPU推理数量`1,..,4,..,8`
 - `nums_warmup`, 热身次数，不参与计时.
 - `num_runs`, 推理次数.
-- `input_info`, 输入张量的信息格式为"[input1:1x3x128x128,float32],[input2:1x4x56x56,float32]".支持多输入
+- `input_info`, 输入张量的信息格式为"[input1,1x3x128x128,float32],[input2,1x4x56x56,float32]".支持多输入
 <!-- - `output_info`, 输出张量的信息格式为:"output1:1x7x128x128,output2:1x4x128x128".支持多输出. -->
 
 
@@ -50,6 +50,6 @@ cmake --build . --target ncnn_benchmark
 - `num_threads`, ort的后端为`arm`的时候，可以选择CPU推理数量`1,..,4,..,8`
 - `nums_warmup`, 热身次数，不参与计时.
 - `num_runs`, 推理次数.
-- `input_info`, 输入张量的信息格式为"[input1:1x3x128x128,float32],[input2:1x4x56x56,float32]".支持多输入
+- `input_info`, 输入张量的信息格式为"[input1,1x3x128x128,float32],[input2,1x4x56x56,float32]".支持多输入
 <!-- - `output_info`, 输出张量的信息格式为:"output1:1x7x128x128,output2:1x4x128x128".支持多输出. -->
 
