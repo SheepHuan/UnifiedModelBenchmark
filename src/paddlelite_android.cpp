@@ -1,8 +1,8 @@
 #include "math.h"
-#include "easylogging++.h"
+
 #include "mutils/timer.hpp"
 #include "mutils/profile.hpp"
-#include "mutils/args.hpp"
+#include "mutils/tensor.hpp"
 #include <sstream>
 #include <iostream>
 #include "paddle_api.h"         // NOLINT
@@ -28,19 +28,10 @@ DEFINE_int32(cpu_power_mode, 0, "power mode: "
                                 "3 for NO_BIND");
 DEFINE_string(input_info, "", "input info");
 
-INITIALIZE_EASYLOGGINGPP
 
-int64_t ShapeProduction(const shape_t &shape)
-{
-    int64_t res = 1;
-    for (auto i : shape)
-    {
-        res *= i;
-    }
-    return res;
-}
 
-void run(std::shared_ptr<PaddlePredictor> predictor, std::unordered_map<std::string, std::vector<int64_t>> input_info, int warmup_runs, int num_runs)
+
+void run(std::shared_ptr<PaddlePredictor> predictor, huan::benchmark::MTensorDict input_tensors_info, int warmup_runs, int num_runs)
 {
 
     std::vector<std::string> input_names = predictor->GetInputNames();
@@ -49,14 +40,13 @@ void run(std::shared_ptr<PaddlePredictor> predictor, std::unordered_map<std::str
     {
         input_count++;
         std::unique_ptr<Tensor> input_tensor(std::move(predictor->GetInput(0)));
-        
-        shape_t shape = input_info[input_names[i]];
+        LOG(INFO) << "input tensor: " << input_names[i];
+        shape_t shape = input_tensors_info.query_pd_shape_info(input_names[i]); //input_info[input_names[i]];
+        LOG(INFO) << "input tensor: " << shape.size();
         input_tensor->Resize(shape);
         auto *data = input_tensor->mutable_data<float>();
-        for (int i = 0; i < ShapeProduction(input_tensor->shape()); ++i)
-        {
-            data[i] = 1;
-        }
+        memset(data, 1, huan::benchmark::shape_production(input_tensor->shape()) * sizeof(float));
+
     }
     MyTimer timer = MyTimer();
     double latency_avg = 0, latency_std = 0;
@@ -86,6 +76,7 @@ void run(std::shared_ptr<PaddlePredictor> predictor, std::unordered_map<std::str
 
 int main(int argc, char **argv)
 {
+
     // 解析命令行参数
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     std::string model_path = FLAGS_model;
@@ -97,9 +88,13 @@ int main(int argc, char **argv)
     std::string backend = FLAGS_backend;
     int nums_warmup = FLAGS_nums_warmup;
     int num_runs = FLAGS_nums_run;
-    std::string input_info = FLAGS_input_info;
-    std::unordered_map<std::string, std::vector<int64_t>> input_info_dict = parse_shape_info_int64(input_info);
-
+    std::string str_input_info = FLAGS_input_info;
+    
+    
+    std::vector<huan::benchmark::MTensorInfo> input_tensors_info;
+    huan::benchmark::parse_tensor_info(str_input_info,input_tensors_info);
+    huan::benchmark::MTensorDict input_tensors_dict(input_tensors_info);
+    
     // // 打印参数
     LOG(INFO) << "=================================\t"
               << "Args Info"
@@ -111,7 +106,7 @@ int main(int argc, char **argv)
     LOG(INFO) << "cpu threads: " << num_threads;
     LOG(INFO) << "nums_warmup: " << nums_warmup;
     LOG(INFO) << "num_runs: " << num_runs;
-    LOG(INFO) << "input_info: " << input_info;
+    LOG(INFO) << "input_info: " << str_input_info;
 
     CxxConfig config;
     config.set_model_file(model_path);
@@ -157,6 +152,6 @@ int main(int argc, char **argv)
     predictor->SaveOptimizedModel(optimized_model_path,
                                   LiteModelType::kNaiveBuffer);
     
-    run(predictor, input_info_dict, nums_warmup, num_runs);
+    run(predictor, input_tensors_dict, nums_warmup, num_runs);
     return 0;
 }

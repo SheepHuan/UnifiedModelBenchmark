@@ -1,5 +1,5 @@
 #include <chrono>
-
+#include <string>
 class MyTimer
 {
     std::chrono::high_resolution_clock::time_point start_time,end_time;
@@ -9,6 +9,7 @@ class MyTimer
     void start();
     void end();
     double get_time();
+    std::string unit ="us";
 };
 
 MyTimer::MyTimer(){

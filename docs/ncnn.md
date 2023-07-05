@@ -31,7 +31,7 @@ cmake -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK/build/cmake/android.toolchain.cmake"\
 # If you want to enable Vulkan, platform api version >= android-24 is needed
 cmake -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK/build/cmake/android.toolchain.cmake" \
     -DANDROID_ABI="arm64-v8a" \
-    -DANDROID_PLATFORM=android-24 -DNCNN_VULKAN=ON ..
+    -DANDROID_PLATFORM=android-24 -DNCNN_VULKAN=ON -DNCNN_SHARED_LIB=ON  ..
 
 # If you use cmake >= 3.21 and ndk-r23
 # you need to add -DANDROID_USE_LEGACY_TOOLCHAIN_FILE=False option for working optimization flags

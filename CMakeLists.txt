@@ -54,8 +54,7 @@ elseif(TARGET_OS STREQUAL "android")
     elseif(TARGET_FRAMEWROK STREQUAL "ncnn")
         include_directories(
             "${CMAKE_SOURCE_DIR}/include"
-            "${CMAKE_SOURCE_DIR}/include/ncnn"
-            "${CMAKE_SOURCE_DIR}/include/glslang"
+            "${CMAKE_SOURCE_DIR}/3rd-party/ncnn/build-android-aarch64-vulkan/install/include/ncnn"
         )
         link_directories(
             "${CMAKE_SOURCE_DIR}/3rd-party/ncnn/build-android-aarch64-vulkan/install/lib"

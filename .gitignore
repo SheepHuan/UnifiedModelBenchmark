@@ -2,7 +2,7 @@
 builds/
 build/
 samples/
-# models/
+release_android_arm64-v8a/
 .vscode/
 libs/
 scripts/*.json
