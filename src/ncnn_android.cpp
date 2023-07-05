@@ -14,7 +14,7 @@ DEFINE_string(model, "", "ncnn model path");
 DEFINE_string(param, "", "ncnn param path");
 DEFINE_string(backend, "arm", "arm,opencl,vulkan");
 DEFINE_int32(num_threads, 2, "num_threads");
-DEFINE_int32(nums_warmup, 3, "warmup_runs");
+DEFINE_int32(num_warmup, 3, "warmup_runs");
 DEFINE_int32(num_runs, 10, "num_runs");
 DEFINE_string(input_info, "", "input info");
 DEFINE_string(output_info, "", "output info");
@@ -26,7 +26,7 @@ void print_args()
     std::string param_path = FLAGS_param;
     std::string backend = FLAGS_backend;
     int num_threads = FLAGS_num_threads;
-    int nums_warmup = FLAGS_nums_warmup;
+    int nums_warmup = FLAGS_num_warmup;
     int num_runs = FLAGS_num_runs;
     std::string input_info = FLAGS_input_info;
     // std::string output_info = FLAGS_output_info;
@@ -149,7 +149,7 @@ int main(int argc, char **argv)
     std::string param_path = FLAGS_param;
     std::string backend = FLAGS_backend;
     int num_threads = FLAGS_num_threads;
-    int nums_warmup = FLAGS_nums_warmup;
+    int nums_warmup = FLAGS_num_warmup;
     int num_runs = FLAGS_num_runs;
     std::string str_input_info = FLAGS_input_info;
     // std::string str_output_info = FLAGS_output_info;

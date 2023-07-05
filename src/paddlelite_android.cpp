@@ -18,8 +18,8 @@ DEFINE_string(model, "", "paddlelite model path");
 DEFINE_string(param, "", "paddlelite param path");
 DEFINE_string(optimized_model_path, "", "Optimized model dir.");
 DEFINE_string(backend, "arm", "use mobile opencl, otherwise use arm cpu");
-DEFINE_int32(nums_warmup, 3, "warmup_runs");
-DEFINE_int32(nums_run, 10, "num runs");
+DEFINE_int32(num_warmup, 3, "warmup_runs");
+DEFINE_int32(num_run, 10, "num runs");
 DEFINE_int32(num_threads, 4, "num threads");
 DEFINE_int32(cpu_power_mode, 0, "power mode: "
                                 "0 for POWER_HIGH;"
@@ -86,8 +86,8 @@ int main(int argc, char **argv)
     int num_threads = FLAGS_num_threads;
     num_threads = std::min(num_threads, 8);
     std::string backend = FLAGS_backend;
-    int nums_warmup = FLAGS_nums_warmup;
-    int num_runs = FLAGS_nums_run;
+    int nums_warmup = FLAGS_num_warmup;
+    int num_runs = FLAGS_num_run;
     std::string str_input_info = FLAGS_input_info;
     
     

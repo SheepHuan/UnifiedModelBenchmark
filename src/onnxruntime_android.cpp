@@ -15,7 +15,7 @@
 #include "mutils/timer.hpp"
 #include <float.h>
 DEFINE_string(graph, "", "onnx model path");
-DEFINE_int32(nums_warmup, 3, "warmup_runs");
+DEFINE_int32(num_warmup, 3, "warmup_runs");
 DEFINE_int32(num_runs, 10, "num_runs");
 DEFINE_int32(num_threads, 2, "num_threads");
 DEFINE_string(backend, "arm", "arm,nnapi");
@@ -31,7 +31,7 @@ void print_args()
     bool enable_op_profiling = FLAGS_enable_op_profiling;
     std::string result_prefix = FLAGS_prefix;
     int num_threads = FLAGS_num_threads;
-    int nums_warmup = FLAGS_nums_warmup;
+    int nums_warmup = FLAGS_num_warmup;
     int num_runs = FLAGS_num_runs;
 
     LOG(INFO) << "model path: " << model_path;
@@ -174,7 +174,7 @@ int main(int argc, char **argv)
     bool enable_op_profiling = FLAGS_enable_op_profiling;
     std::string result_prefix = FLAGS_prefix;
     int num_threads = FLAGS_num_threads;
-    int nums_warmup = FLAGS_nums_warmup;
+    int nums_warmup = FLAGS_num_warmup;
     int num_runs = FLAGS_num_runs;
 
     print_args();
