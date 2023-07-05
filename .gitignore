@@ -12,3 +12,4 @@ tmp/
 *.zip
 3rd-party/
 release/
+models/
