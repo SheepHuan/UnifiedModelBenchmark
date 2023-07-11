@@ -9,24 +9,26 @@
 #include <string>
 #include <cstdio>
 #include <vector>
-#include "easylogging++.h"
-#include <gflags/gflags.h>
+// #include "easylogging++.h"
+// #include <gflags/gflags.h>
 #include "mutils/profile.hpp"
 #include "mutils/timer.hpp"
+#include "mutils/args.hpp"
+#include "mutils/log.hpp"
 #include <float.h>
-DEFINE_string(graph, "", "onnx model path");
-DEFINE_int32(num_warmup, 3, "warmup_runs");
-DEFINE_int32(num_runs, 10, "num_runs");
-DEFINE_int32(num_threads, 2, "num_threads");
-DEFINE_string(backend, "arm", "arm,nnapi");
-DEFINE_bool(enable_op_profiling, false, "enable_op_profiling");
-DEFINE_string(prefix, "", "result");
+// DEFINE_string(graph, "", "onnx model path");
+// DEFINE_int32(num_warmup, 3, "warmup_runs");
+// DEFINE_int32(num_runs, 10, "num_runs");
+// DEFINE_int32(num_threads, 2, "num_threads");
+// DEFINE_string(backend, "arm", "arm,nnapi");
+// DEFINE_bool(enable_op_profiling, false, "enable_op_profiling");
+// DEFINE_string(prefix, "", "result");
 
-INITIALIZE_EASYLOGGINGPP
+// INITIALIZE_EASYLOGGINGPP
 void print_args()
 {
-     LOG(INFO) <<"=================================\t"<<"Args Info"<<"\t=================================";
-    std::string model_path = FLAGS_graph;
+    LOG(INFO) <<"=================================\t"<<"Args Info"<<"\t=================================";
+    std::string model_path = FLAGS_model;
     std::string backend = FLAGS_backend;
     bool enable_op_profiling = FLAGS_enable_op_profiling;
     std::string result_prefix = FLAGS_prefix;
@@ -36,11 +38,7 @@ void print_args()
 
     LOG(INFO) << "model path: " << model_path;
     LOG(INFO) << "backend: " << backend;
-    if (backend == "cpu")
-    {
-        LOG(INFO) << "cpu threads: " << num_threads;
-    }
-
+    LOG(INFO) << "cpu threads: " << num_threads;
     LOG(INFO) << "nums_warmup: " << nums_warmup;
     LOG(INFO) << "num_runs: " << num_runs;
 }
@@ -156,10 +154,10 @@ int run(Ort::Session &session, int nums_warmup, int num_runs)
         auto output_tensors = session.Run(Ort::RunOptions{nullptr}, input_names_ptr.data(), input_tensors.data(), input_count, output_names_ptr.data(), output_count);
         timer.end();
         latency_per_rounds.push_back(timer.get_time());
-         latency_max = timer.get_time() > latency_max ? timer.get_time() : latency_max;
-        latency_min = timer.get_time() < latency_min ? timer.get_time() : latency_min;
+        //  latency_max = timer.get_time() > latency_max ? timer.get_time() : latency_max;
+        // latency_min = timer.get_time() < latency_min ? timer.get_time() : latency_min;
     }
-    calc_std_deviation(latency_per_rounds, latency_per_rounds.size(), latency_avg, latency_std);
+    profile_latency(latency_per_rounds, latency_per_rounds.size(),latency_min,latency_max, latency_avg, latency_std);
     LOG(INFO) << "warmup: " << nums_warmup << " rounds, avg time: " << warmup_time * 1.0 / nums_warmup << " us";
     LOG(INFO) << "run: " << num_runs << " rounds, min: "<<latency_min<<" us, max: "<<latency_max <<" us, avg: " << latency_avg << " us, std: " << latency_std << " us";
     return 0;
@@ -169,7 +167,7 @@ int main(int argc, char **argv)
 {
     // 解析命令行参数
     gflags::ParseCommandLineFlags(&argc, &argv, true);
-    std::string model_path = FLAGS_graph;
+    std::string model_path = FLAGS_model;
     std::string backend = FLAGS_backend;
     bool enable_op_profiling = FLAGS_enable_op_profiling;
     std::string result_prefix = FLAGS_prefix;

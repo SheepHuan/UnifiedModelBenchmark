@@ -36,7 +36,7 @@ bash lite/tools/build_android.sh \
 --toolchain=clang \
 --android_stl=c++_shared \
 --with_java=OFF \
---with_profile=ON \
+--with_profile=OFF \
 --android_api_level=27 \
 --with_arm82_fp16=ON \
 --with_extra=ON \

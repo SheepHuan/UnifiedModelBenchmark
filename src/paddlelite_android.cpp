@@ -1,37 +1,23 @@
-#include "math.h"
-
 #include "mutils/timer.hpp"
 #include "mutils/profile.hpp"
 #include "mutils/tensor.hpp"
+#include "mutils/args.hpp"
 #include <sstream>
 #include <iostream>
 #include "paddle_api.h"         // NOLINT
 // #include "paddle_use_passes.h"  // NOLINT
 // #include "paddle_use_kernels.h"  // NOLINT
 // #include "paddle_use_ops.h"      // NOLINT
-#include <gflags/gflags.h>
+
 using namespace paddle::lite_api;
 // https://github.com/PaddlePaddle/Paddle-Lite/blob/develop/lite/api/tools/benchmark/benchmark.h
 // https://github.com/PaddlePaddle/Paddle-Lite/blob/develop/lite/demo/cxx/mobile_full/mobilenetv1_full_api.cc
 
-DEFINE_string(model, "", "paddlelite model path");
-DEFINE_string(param, "", "paddlelite param path");
-DEFINE_string(optimized_model_path, "", "Optimized model dir.");
-DEFINE_string(backend, "arm", "use mobile opencl, otherwise use arm cpu");
-DEFINE_int32(num_warmup, 3, "warmup_runs");
-DEFINE_int32(num_runs, 10, "num runs");
-DEFINE_int32(num_threads, 4, "num threads");
-DEFINE_int32(cpu_power_mode, 0, "power mode: "
-                                "0 for POWER_HIGH;"
-                                "1 for POWER_LOW;"
-                                "2 for POWER_FULL;"
-                                "3 for NO_BIND");
-DEFINE_string(input_info, "", "input info");
 
 
 
 
-void run(std::shared_ptr<PaddlePredictor> predictor, huan::benchmark::MTensorDict input_tensors_info, int warmup_runs, int num_runs)
+void run(std::shared_ptr<PaddlePredictor> predictor, huan::benchmark::MTensorDict input_tensors_info, int num_warmup, int num_runs)
 {
 
     std::vector<std::string> input_names = predictor->GetInputNames();
@@ -51,17 +37,16 @@ void run(std::shared_ptr<PaddlePredictor> predictor, huan::benchmark::MTensorDic
 
     }
     MyTimer timer = MyTimer();
-    double latency_avg = 0, latency_std = 0;
+    double latency_avg = 0, latency_std = 0, latency_max = DBL_MIN, latency_min = DBL_MAX;
     std::vector<double> latency_per_rounds;
 
-    double warmup_latency_avg = 0, warmup_latency_std = 0;
-    std::vector<double> warmup_latency_per_rounds;
-    for (int i = 0; i < warmup_runs; i++)
+    double warmup_time=0;
+    for (int i = 0; i < num_warmup; i++)
     {
         timer.start();
         predictor->Run();
         timer.end();
-        warmup_latency_per_rounds.push_back(timer.get_time());
+       warmup_time+=timer.get_time();
     }
 
     for (int i = 0; i < num_runs; i++)
@@ -70,10 +55,11 @@ void run(std::shared_ptr<PaddlePredictor> predictor, huan::benchmark::MTensorDic
         predictor->Run();
         timer.end();
         latency_per_rounds.push_back(timer.get_time());
+    
     }
-    calc_std_deviation(warmup_latency_per_rounds, warmup_latency_per_rounds.size(), warmup_latency_avg, warmup_latency_std);
-    calc_std_deviation(latency_per_rounds, latency_per_rounds.size(), latency_avg, latency_std);
-    printf("warmup: %d rounds, avg time: %f us, std: %f us\nrun: %d rounds, avg time: %f us, std: %f us\n", warmup_runs, warmup_latency_avg, warmup_latency_std, num_runs, latency_avg, latency_std);
+    profile_latency(latency_per_rounds, latency_per_rounds.size(),latency_min,latency_max, latency_avg, latency_std);
+    LOG(INFO) << "warmup: " << num_warmup << " rounds, avg time: " << warmup_time * 1.0 / num_warmup << " us";
+    LOG(INFO) << "run: " << num_runs << " rounds, min: " << latency_min << " us, max: " << latency_max << " us, avg : " << latency_avg << " us, std: " << latency_std << " us";
 }
 
 int main(int argc, char **argv)
@@ -88,7 +74,7 @@ int main(int argc, char **argv)
     int num_threads = FLAGS_num_threads;
     num_threads = std::min(num_threads, 8);
     std::string backend = FLAGS_backend;
-    int nums_warmup = FLAGS_num_warmup;
+    int num_warmup = FLAGS_num_warmup;
     int num_runs = FLAGS_num_runs;
     std::string str_input_info = FLAGS_input_info;
     
@@ -106,7 +92,7 @@ int main(int argc, char **argv)
     LOG(INFO) << "optimized model dir: " << optimized_model_path;
     LOG(INFO) << "backend: " << backend;
     LOG(INFO) << "cpu threads: " << num_threads;
-    LOG(INFO) << "nums_warmup: " << nums_warmup;
+    LOG(INFO) << "nums_warmup: " << num_warmup;
     LOG(INFO) << "num_runs: " << num_runs;
     LOG(INFO) << "input_info: " << str_input_info;
 
@@ -154,6 +140,6 @@ int main(int argc, char **argv)
     predictor->SaveOptimizedModel(optimized_model_path,
                                   LiteModelType::kNaiveBuffer);
     
-    run(predictor, input_tensors_dict, nums_warmup, num_runs);
+    run(predictor, input_tensors_dict, num_warmup, num_runs);
     return 0;
 }

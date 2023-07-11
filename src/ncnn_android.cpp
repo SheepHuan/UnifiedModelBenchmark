@@ -1,23 +1,13 @@
 #include "ncnn/net.h"
 #include "ncnn/blob.h"
-#include <gflags/gflags.h>
+#include "cpu.h"
+#include "gpu.h"
 #include <iostream>
 #include "mutils/tensor.hpp"
 #include "mutils/profile.hpp"
 #include "mutils/timer.hpp"
-#include "cpu.h"
-#include "gpu.h"
-#include <float.h>
-#include <math.h>
+#include "mutils/args.hpp"
 #include "mutils/log.hpp"
-DEFINE_string(model, "", "ncnn model path");
-DEFINE_string(param, "", "ncnn param path");
-DEFINE_string(backend, "arm", "arm,opencl,vulkan");
-DEFINE_int32(num_threads, 2, "num_threads");
-DEFINE_int32(num_warmup, 3, "warmup_runs");
-DEFINE_int32(num_runs, 10, "num_runs");
-DEFINE_string(input_info, "", "input info");
-DEFINE_string(output_info, "", "output info");
 
 
 void print_args()
@@ -132,11 +122,9 @@ void run(const char *model_path, const char *param_path,
         }
         timer.end();
         latency_per_rounds.push_back(timer.get_time());
-        latency_max = timer.get_time() > latency_max ? timer.get_time() : latency_max;
-        latency_min = timer.get_time() < latency_min ? timer.get_time() : latency_min;
     }
   
-    calc_std_deviation(latency_per_rounds, latency_per_rounds.size(), latency_avg, latency_std);
+    profile_latency(latency_per_rounds, latency_per_rounds.size(),latency_min,latency_max, latency_avg, latency_std);
     LOG(INFO) << "warmup: " << nums_warmup << " rounds, avg time: " << warmup_time * 1.0 / nums_warmup << " us";
     LOG(INFO) << "run: " << num_runs << " rounds, min: " << latency_min << " us, max: " << latency_max << " us, avg : " << latency_avg << " us, std: " << latency_std << " us";
 }
@@ -152,8 +140,7 @@ int main(int argc, char **argv)
     int nums_warmup = FLAGS_num_warmup;
     int num_runs = FLAGS_num_runs;
     std::string str_input_info = FLAGS_input_info;
-    // std::string str_output_info = FLAGS_output_info;
-
+  
     std::vector<huan::benchmark::MTensorInfo> input_tensors_info;
     huan::benchmark::parse_tensor_info(str_input_info, input_tensors_info);
     huan::benchmark::MTensorDict input_tensors_dict(input_tensors_info);

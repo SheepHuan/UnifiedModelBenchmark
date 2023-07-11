@@ -30,6 +30,17 @@ bash lite/tools/build_android.sh \
 --android_api_level=21 \
 --with_opencl=ON \
 full_publish
+
+bash lite/tools/build_android.sh \
+--arch=armv8 \
+--toolchain=clang \
+--android_stl=c++_shared \
+--with_java=OFF \
+--with_log=OFF \
+--with_extra=ON \
+--android_api_level=21 \
+--with_opencl=ON \
+full_publish
 ```
 此时编译的文件位置在`build.lite.android.armv8.clang/inference_lite_lib.android.armv8.opencl/`目录下
 

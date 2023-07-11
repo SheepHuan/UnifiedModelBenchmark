@@ -45,12 +45,18 @@ elseif(TARGET_OS STREQUAL "android")
         include_directories(
             "${CMAKE_SOURCE_DIR}/include"
             "${CMAKE_SOURCE_DIR}/3rd-party/Paddle-Lite/build.lite.android.armv8.clang/inference_lite_lib.android.armv8.opencl/cxx/include"
-            
         )
         link_directories(
             "${CMAKE_SOURCE_DIR}/3rd-party/Paddle-Lite/build.lite.android.armv8.clang/inference_lite_lib.android.armv8.opencl/cxx/lib"
-       
             )
+        # include_directories(
+        #     "${CMAKE_SOURCE_DIR}/include"
+        #     "${CMAKE_SOURCE_DIR}/tmp/inference_lite_lib.android.armv8.clang.with_extra.with_log.full_publish/cxx/include"
+        # )
+        # link_directories(
+        #     "${CMAKE_SOURCE_DIR}/tmp/inference_lite_lib.android.armv8.clang.with_extra.with_log.full_publish/cxx/lib"
+        #     )
+
     elseif(TARGET_FRAMEWROK STREQUAL "ncnn")
         include_directories(
             "${CMAKE_SOURCE_DIR}/include"

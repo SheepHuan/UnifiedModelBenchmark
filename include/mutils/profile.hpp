@@ -1,34 +1,23 @@
 #include <vector>
 #include <cmath>
-void calc_std_deviation(std::vector<double> arr, int size,double& latency_avg ,double& latency_std) {
+#include <cfloat>
+void profile_latency(std::vector<double> arr, int size, double &latency_min, double &latency_max, double &latency_avg, double &latency_std)
+{
     double sum = 0.0, mean, stddev = 0.0;
-    // double min_val,max_val;
-    for(int i=0; i<size; ++i) {
+    latency_max = DBL_MIN, latency_min = DBL_MAX;
+    for (int i = 0; i < size; ++i)
+    {
         sum += arr[i];
+        latency_max = arr[i] > latency_max ? arr[i] : latency_max;
+        latency_min = arr[i] < latency_min ? arr[i] : latency_min;
     }
 
-    mean = sum/size;
+    mean = sum / size;
 
-    for(int i=0; i<size; ++i) {
+    for (int i = 0; i < size; ++i)
+    {
         stddev += pow(arr[i] - mean, 2);
     }
     latency_avg = mean;
-    latency_std = sqrt(stddev/size);
-    // return sqrt(stddev/size);
-}
-
-void calc_max_min(std::vector<double> arr, int size,double& latency_avg ,double& latency_std) {
-    double sum = 0.0, mean, stddev = 0.0;
-    // double min_val,max_val;
-    for(int i=0; i<size; ++i) {
-        sum += arr[i];
-    }
-
-    mean = sum/size;
-
-    for(int i=0; i<size; ++i) {
-        stddev += pow(arr[i] - mean, 2);
-    }
-    latency_avg = mean;
-    latency_std = sqrt(stddev/size);
+    latency_std = sqrt(stddev / size);
 }
