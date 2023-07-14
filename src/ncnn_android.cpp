@@ -7,7 +7,6 @@
 #include "mutils/profile.hpp"
 #include "mutils/timer.hpp"
 #include "mutils/args.hpp"
-#include "mutils/log.hpp"
 
 
 void print_args()
@@ -126,13 +125,13 @@ void run(const char *model_path, const char *param_path,
   
     profile_latency(latency_per_rounds, latency_per_rounds.size(),latency_min,latency_max, latency_avg, latency_std);
     LOG(INFO) << "warmup: " << nums_warmup << " rounds, avg time: " << warmup_time * 1.0 / nums_warmup << " us";
-    LOG(INFO) << "run: " << num_runs << " rounds, min: " << latency_min << " us, max: " << latency_max << " us, avg : " << latency_avg << " us, std: " << latency_std << " us";
+    LOG(INFO) << "run: " << num_runs << " rounds, min: " << latency_min << " us, max: " << latency_max << " us, avg: " << latency_avg << " us, std: " << latency_std << " us";
 }
 
 int main(int argc, char **argv)
 {
     // 解析命令行参数
-    gflags::ParseCommandLineFlags(&argc, &argv, true);
+    init_env(argc,argv);
     std::string model_path = FLAGS_model;
     std::string param_path = FLAGS_param;
     std::string backend = FLAGS_backend;

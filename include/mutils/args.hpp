@@ -1,5 +1,5 @@
 #include <gflags/gflags.h>
-
+#include <glog/logging.h>
 DEFINE_string(model, "", "paddlelite/ncnn model path,onnxrumtime graph path");
 DEFINE_string(param, "", "paddlelite/ncnn param path");
 DEFINE_string(backend, "arm", "paddlelite: arm,opencl"
@@ -21,3 +21,10 @@ DEFINE_int32(cpu_power_mode, 0, "power mode: "
 // FOR ONNXRUNTIME
 DEFINE_bool(enable_op_profiling, false, "enable_op_profiling");
 DEFINE_string(prefix, "", "result");
+
+
+void init_env(int argc,char **argv){
+    gflags::ParseCommandLineFlags(&argc, &argv, true);
+    google::InitGoogleLogging(argv[0]);
+    google::SetStderrLogging(google::GLOG_INFO);
+}

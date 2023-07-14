@@ -1,7 +1,7 @@
 #include "core/session/onnxruntime_cxx_api.h"
 #include "core/session/onnxruntime_c_api.h"
-#ifdef ANDROID_PLATFORM
-#include "providers/nnapi/nnapi_provider_factory.h"
+#ifdef __ANDROID__
+#include "core/providers/nnapi/nnapi_provider_factory.h"
 #endif
 #include <chrono>
 #include <iostream>
@@ -9,22 +9,11 @@
 #include <string>
 #include <cstdio>
 #include <vector>
-// #include "easylogging++.h"
-// #include <gflags/gflags.h>
 #include "mutils/profile.hpp"
 #include "mutils/timer.hpp"
 #include "mutils/args.hpp"
-#include "mutils/log.hpp"
 #include <float.h>
-// DEFINE_string(graph, "", "onnx model path");
-// DEFINE_int32(num_warmup, 3, "warmup_runs");
-// DEFINE_int32(num_runs, 10, "num_runs");
-// DEFINE_int32(num_threads, 2, "num_threads");
-// DEFINE_string(backend, "arm", "arm,nnapi");
-// DEFINE_bool(enable_op_profiling, false, "enable_op_profiling");
-// DEFINE_string(prefix, "", "result");
 
-// INITIALIZE_EASYLOGGINGPP
 void print_args()
 {
     LOG(INFO) <<"=================================\t"<<"Args Info"<<"\t=================================";
@@ -166,7 +155,7 @@ int run(Ort::Session &session, int nums_warmup, int num_runs)
 int main(int argc, char **argv)
 {
     // 解析命令行参数
-    gflags::ParseCommandLineFlags(&argc, &argv, true);
+    init_env(argc,argv);
     std::string model_path = FLAGS_model;
     std::string backend = FLAGS_backend;
     bool enable_op_profiling = FLAGS_enable_op_profiling;
@@ -197,7 +186,7 @@ int main(int argc, char **argv)
             这里可以设置文档地址(https://onnxruntime.ai/docs/execution-providers/NNAPI-ExecutionProvider.html)，例如下:
             nnapi_flags |= NNAPI_FLAG_USE_FP16;
             */
-        #ifdef ANDROID_PLATFORM
+        #ifdef __ANDROID__
                 uint32_t nnapi_flags = 0;
                 nnapi_flags |= NNAPI_FLAG_CPU_DISABLED;
                 // nnapi_flags |= NNAPI_FLAG_USE_FP16;

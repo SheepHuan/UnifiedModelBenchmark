@@ -17,11 +17,7 @@ export ANDROID_NDK=/root/android_sdk/ndk/25.0.8775105
 mkdir -p build-android-aarch64-vulkan
 cd build-android-aarch64-vulkan
 
-cmake -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK/build/cmake/android.toolchain.cmake" \
-    -DANDROID_ABI="arm64-v8a" \
-    -DANDROID_PLATFORM=android-29 \
-    -DNCNN_VULKAN=ON \
-    -DNCNN_SHARED_LIB=ON ..
+cmake -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK/build/cmake/android.toolchain.cmake" -DANDROID_ABI="arm64-v8a" -DANDROID_PLATFORM=android-29  -DNCNN_VULKAN=ON -DANDROID_PLATFORM=android-27 -DNCNN_SHARED_LIB=ON ..
 
 make -j16
 make install
@@ -62,4 +58,8 @@ cd models/
 onnxsim resnet50-opset16.onnx sim_resnet50-opset16.onnx
 
 ../release/20230705_android_arm64-v8a/ncnn_20230517-arm_vulkan/tools/onnx2ncnn sim_resnet50-opset16.onnx ncnn_resnet50-opset16.param ncnn_resnet50-opset16.bin
+
+./onnx2ncnn models/sim-fusenet_middle-opset16.onnx ncnn/fusenet.param ncnn/fusenet.bin
+./onnx2ncnn models/sim-mobilestereonet2d-opset16.onnx ncnn/ms2d.param ncnn/ms2d.bin
+./onnx2ncnn models/sim-stereonetcmn-opset16.onnx ncnn/cmn.param ncnn/cmn.bin
 ```

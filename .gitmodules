@@ -1,6 +1,6 @@
 [submodule "3rd-party/gflags"]
 	path = 3rd-party/gflags
 	url = https://github.com/gflags/gflags.git
-[submodule "3rd-party/easyloggingpp"]
-	path = 3rd-party/easyloggingpp
-	url = https://github.com/abumq/easyloggingpp.git
+[submodule "3rd-party/glog"]
+	path = 3rd-party/glog
+	url = https://github.com/google/glog.git
