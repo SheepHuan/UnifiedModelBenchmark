@@ -4,7 +4,8 @@
 #include <sstream>
 #include <regex>
 #include <typeinfo>
-#include "log.hpp"
+#include "args.hpp"
+// #include "log.hpp"
 #include <stdexcept>
 #include <assert.h>
 
@@ -70,9 +71,9 @@ namespace huan
             {
                 for (int i = 0; i < inputs_info.size(); i++)
                 {
-                    if (IS_DEBUG){
-                        LOG(INFO)<<__FILE__<<"#"<< __LINE__<<":"<<inputs_info[i].name<<","<<tensor_name;
-                    }
+                    // if (IS_DEBUG){
+                    //     LOG(INFO)<<__FILE__<<"#"<< __LINE__<<":"<<inputs_info[i].name<<","<<tensor_name;
+                    // }
                     if (inputs_info[i].name == tensor_name)
                     {
                         return inputs_info[i].shape;

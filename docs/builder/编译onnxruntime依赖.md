@@ -34,14 +34,18 @@ sdkmanager --install "ndk;25.0.8775105"
 # 推荐设置代理
 export https_proxy="http://172.16.6.15:7891"
 export http_proxy="http://172.16.6.15:7891"
+export ANDROID_NDK="/root/android_sdk/ndk/25.0.8775105"
+export PATH=$PATH:/root/android_sdk/cmake/3.22.1/bin
 
-
-git clone -b v1.15.1 https://github.com/microsoft/onnxruntime.git
+git clone  --recursive -b v1.14.1 https://github.com/microsoft/onnxruntime.git
 cd onnxruntime 
 git submodule sync --recursive
 # 编译
 ./build.bat --android --android_sdk_path .../Android --android_ndk_path .../Android/ndk/21.1.6352462 --android_abi arm64-v8a --android_api 27
 
+./build.sh --config Release --parallel --build_shared_lib --allow_running_as_root --android --android_sdk_path  /root/android_sdk --android_ndk_path /root/android_sdk/ndk/23.2.8568313 --android_abi arm64-v8a --android_api 27
+
+./build.sh --config Release --parallel --build_shared_lib --android --android_sdk_path /root/android_sdk --android_ndk_path /root/android_sdk/ndk/25.0.8775105 --use_nnapi --android_abi arm64-v8a --android_api 29
 
 ./build.sh --allow_running_as_root --parallel --build_shared_lib --android --android_sdk_path /root/android_sdk --android_ndk_path /root/android_sdk/ndk/25.0.8775105 --use_nnapi --android_abi arm64-v8a --android_api 27  --cmake_generator Ninja
 

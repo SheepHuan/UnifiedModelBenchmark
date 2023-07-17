@@ -1,0 +1,16 @@
+vi merge.mri
+#以下是内容
+#需要修改路径
+create libonnxruntime.a
+addlib /root/workspace/UnifiedModelBenchmark/3rd-party/onnxruntime/build/Android/Debug/libonnxruntime_common.a
+addlib /root/workspace/UnifiedModelBenchmark/3rd-party/onnxruntime/build/Android/Debug/libonnxruntime_framework.a
+addlib /root/workspace/UnifiedModelBenchmark/3rd-party/onnxruntime/build/Android/Debug/libonnxruntime_graph.a
+addlib /root/workspace/UnifiedModelBenchmark/3rd-party/onnxruntime/build/Android/Debug/libonnxruntime_mlas.a
+addlib /root/workspace/UnifiedModelBenchmark/3rd-party/onnxruntime/build/Android/Debug/libonnxruntime_optimizer.a
+addlib /root/workspace/UnifiedModelBenchmark/3rd-party/onnxruntime/build/Android/Debug/libonnxruntime_providers.a
+addlib /root/workspace/UnifiedModelBenchmark/3rd-party/onnxruntime/build/Android/Debug/libonnxruntime_session.a
+addlib /root/workspace/UnifiedModelBenchmark/3rd-party/onnxruntime/build/Android/Debug/libonnxruntime_util.a
+addlib /root/workspace/UnifiedModelBenchmark/3rd-party/onnxruntime/build/Android/Debug/lib/libgmock.a
+addlib /root/workspace/UnifiedModelBenchmark/3rd-party/onnxruntime/build/Android/Debug/lib/libgtest.a
+save
+end

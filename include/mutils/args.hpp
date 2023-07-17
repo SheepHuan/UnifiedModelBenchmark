@@ -1,3 +1,4 @@
+#pragma once
 #include <gflags/gflags.h>
 #include <glog/logging.h>
 DEFINE_string(model, "", "paddlelite/ncnn model path,onnxrumtime graph path");

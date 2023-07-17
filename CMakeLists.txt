@@ -1,16 +1,19 @@
 cmake_minimum_required (VERSION 3.18)
 project (Benchmark)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 11)
 
 
 
 # 支持gdb调试
-SET(CMAKE_BUILD_TYPE "Debug")
-SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")
-SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
+# SET(CMAKE_BUILD_TYPE "Debug")
+# SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")
+# SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
 option(BUILD_NCNN "" OFF)
 option(BUILD_ONNXRUNTIME "" OFF)
+option(BUILD_LINUX_CPU "" OFF)
+option(BUILD_ANDROID "" OFF)
+
 
 add_subdirectory("3rd-party/gflags")
 add_subdirectory("3rd-party/glog")
@@ -24,6 +27,7 @@ include_directories(
 
 # framework option
 if (BUILD_NCNN)
+    message("ncnn")
     set(APP_NAME "ncnn_benchmark")
     include_directories(
         "${CMAKE_SOURCE_DIR}/include/ncnn"
@@ -35,6 +39,7 @@ if (BUILD_NCNN)
     add_executable(${APP_NAME} 
     "src/ncnn_android.cpp")
 elseif (BUILD_ONNXRUNTIME)
+    message("ort")
     set(APP_NAME "ort_benchmark")
     include_directories(
         "${CMAKE_SOURCE_DIR}/include/onnxruntime"
@@ -42,7 +47,7 @@ elseif (BUILD_ONNXRUNTIME)
         "${CMAKE_SOURCE_DIR}/include/onnxruntime/core/session"
     )
     link_directories(
-        "${CMAKE_SOURCE_DIR}/libs/onnxruntime-v1.15.1-android-shared"
+        "/root/workspace/UnifiedModelBenchmark/libs/onnxruntime-v1.14.1-android_shared/libs"
     )
     set(libs onnxruntime)
     add_executable(${APP_NAME} 
@@ -51,9 +56,9 @@ endif()
 
 target_link_libraries(
     ${APP_NAME}
-    ${libs}
     gflags::gflags
     glog::glog
+    ${libs}
     )
 
 

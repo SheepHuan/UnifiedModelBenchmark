@@ -1,8 +1,8 @@
 #include "core/session/onnxruntime_cxx_api.h"
 #include "core/session/onnxruntime_c_api.h"
-#ifdef __ANDROID__
-#include "core/providers/nnapi/nnapi_provider_factory.h"
-#endif
+// #ifdef __ANDROID__
+// #include "core/providers/nnapi/nnapi_provider_factory.h"
+// #endif
 #include <chrono>
 #include <iostream>
 #include <sstream>
@@ -186,14 +186,14 @@ int main(int argc, char **argv)
             这里可以设置文档地址(https://onnxruntime.ai/docs/execution-providers/NNAPI-ExecutionProvider.html)，例如下:
             nnapi_flags |= NNAPI_FLAG_USE_FP16;
             */
-        #ifdef __ANDROID__
-                uint32_t nnapi_flags = 0;
-                nnapi_flags |= NNAPI_FLAG_CPU_DISABLED;
-                // nnapi_flags |= NNAPI_FLAG_USE_FP16;
-                Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_Nnapi(session_options, nnapi_flags));
-        #else
-                LOG(ERROR)<<"Current Complier is not for android!";
-        #endif
+        // #ifdef __ANDROID__
+        //         uint32_t nnapi_flags = 0;
+        //         nnapi_flags |= NNAPI_FLAG_CPU_DISABLED;
+        //         // nnapi_flags |= NNAPI_FLAG_USE_FP16;
+        //         Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_Nnapi(session_options, nnapi_flags));
+        // #else
+        //         LOG(ERROR)<<"Current Complier is not for android!";
+        // #endif
         run(session, nums_warmup, num_runs);
     }
     else
