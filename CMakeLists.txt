@@ -46,8 +46,11 @@ elseif (BUILD_ONNXRUNTIME)
         "${CMAKE_SOURCE_DIR}/include/onnxruntime/core"
         "${CMAKE_SOURCE_DIR}/include/onnxruntime/core/session"
     )
+    # link_directories(
+    #     "/root/workspace/UnifiedModelBenchmark/libs/onnxruntime-v1.14.1-android_shared/libs"
+    # )
     link_directories(
-        "/root/workspace/UnifiedModelBenchmark/libs/onnxruntime-v1.14.1-android_shared/libs"
+        "/root/workspace/UnifiedModelBenchmark/libs/test"
     )
     set(libs onnxruntime)
     add_executable(${APP_NAME} 

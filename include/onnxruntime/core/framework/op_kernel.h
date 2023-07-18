@@ -98,6 +98,17 @@ class OpKernel {
     return Status::OK();
   }
 
+  // Override this function to return a list of attributes the session can safely remove
+  // after it is intialized and saved. This option is useful to reduce memory usage
+  // when the kernel does not reuse the operator attributes but copies them.
+  // All attributes returned by this method will be removed by method
+  // PruneRemovableAttributes of they exists.
+  // @param removable_attributes set of attributes the session can safely remove.
+  virtual Status GetRemovableAttributes(InlinedVector<std::string>& removable_attributes) const {
+    removable_attributes.clear();
+    return Status::OK();
+  }
+
   // Override this function to use provided pre-packed weight.
   // Status UseSharedPrePackedBuffers(std::vector<BufferUniquePtr>& prepacked_buffers,
   //                                 int input_idx,
@@ -110,7 +121,9 @@ class OpKernel {
   // @param prepacked_buffers: The pre-packed buffers to be used by this kernel for the provided input index
   //                           (Sometimes a single constant initializer may have multiple pre-packed buffers associated
   //                            with it and it upto the kernel developer to store it in any order of their choice in PrePack()
-  //                            and must use the same order for retrieval in UseSharedPrePackedBuffers().
+  //                            and must use the same order for retrieval in UseSharedPrePackedBuffers(). Though each element
+  //                           of this vector is a BufferUniquePtr, the deleter of the BufferUniquePtr is NULL. So actually they
+  //                           are raw pointers.
   // @param input_idx: The input index of the tensor in this kernel
   // @param used_shared_buffers: Boolean flag set by the kernel implementation indicating
   // that the provided weight has been used by the kernel.
@@ -121,7 +134,7 @@ class OpKernel {
     return Status::OK();
   }
 
-  const OrtMemoryInfo& Allocator(int id, OrtMemType mem_type) const;
+  const OrtDevice GetDevice(OrtMemType mem_type) const;
   const OpKernelInfo& Info() const {
     return *op_kernel_info_;
   }
@@ -142,7 +155,9 @@ struct KernelCreateInfo {
   KernelCreateInfo(std::unique_ptr<KernelDef> definition,
                    KernelCreateFn create_func)
       : kernel_def(std::move(definition)),
-        kernel_create_func(create_func) {}
+        kernel_create_func(create_func) {
+    assert(kernel_def != nullptr);
+  }
 
   KernelCreateInfo(KernelCreateInfo&& other) noexcept
       : kernel_def(std::move(other.kernel_def)),
