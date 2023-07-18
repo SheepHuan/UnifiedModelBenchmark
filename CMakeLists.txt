@@ -42,9 +42,9 @@ elseif (BUILD_ONNXRUNTIME)
     message("ort")
     set(APP_NAME "ort_benchmark")
     include_directories(
-        "${CMAKE_SOURCE_DIR}/include/onnxruntime"
-        "${CMAKE_SOURCE_DIR}/include/onnxruntime/core"
-        "${CMAKE_SOURCE_DIR}/include/onnxruntime/core/session"
+        "${CMAKE_SOURCE_DIR}/libs/test/include/onnxruntime"
+        "${CMAKE_SOURCE_DIR}/libs/test/include/onnxruntime/core"
+        "${CMAKE_SOURCE_DIR}/libs/test/include/onnxruntime/core/session"
     )
     # link_directories(
     #     "/root/workspace/UnifiedModelBenchmark/libs/onnxruntime-v1.14.1-android_shared/libs"

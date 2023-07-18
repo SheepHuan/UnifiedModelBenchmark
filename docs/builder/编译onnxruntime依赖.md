@@ -43,7 +43,7 @@ git submodule sync --recursive
 # 编译
 ./build.bat --android --android_sdk_path .../Android --android_ndk_path .../Android/ndk/21.1.6352462 --android_abi arm64-v8a --android_api 27
 
-./build.sh --config Release --parallel --build_shared_lib --allow_running_as_root --android --android_sdk_path  /root/android_sdk --android_ndk_path /root/android_sdk/ndk/23.2.8568313 --android_abi arm64-v8a --android_api 27
+./build.sh --config Release --parallel --build_shared_lib --android --android_sdk_path  /root/android_sdk --android_ndk_path /root/android_sdk/ndk/23.2.8568313 --android_abi arm64-v8a --android_api 27
 
 ./build.sh --config Release --parallel --build_shared_lib --android --android_sdk_path /root/android_sdk --android_ndk_path /root/android_sdk/ndk/25.0.8775105 --use_nnapi --android_abi arm64-v8a --android_api 29
 
