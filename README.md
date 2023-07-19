@@ -36,7 +36,7 @@ cd
 
 ### onnxruntime benchmark
 #### 参数
-- `graph`, 模型图的路径.
+- `model`, 模型图的路径.
 - `backend`, ort的推理后端,默认`arm`,可选`arm`,`nnapi`.
 - `num_threads`, ort的后端为`arm`的时候，可以选择CPU推理数量`1,..,4,..,8`
 - `nums_warmup`, 热身次数，不参与计时.

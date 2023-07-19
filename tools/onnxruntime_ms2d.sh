@@ -12,7 +12,7 @@ adb -s $device push --sync $benchmark_path $device_dir
 
 adb -s $device shell "export LD_LIBRARY_PATH=/data/local/tmp/hcp/libs && .$device_dir/ort_benchmark \
 --model=$device_dir/models/resnet50-opset16.onnx \
---backend=arm --num_warmup=10 --num_runs=50 --num_threads=4"
+--backend=arm --num_warmup=10 --num_runs=50 --num_threads=4 --enable_op_profiling=true --prefix=/data/local/tmp/hcp/1"
 
 # adb -s $device shell "export LD_LIBRARY_PATH=$device_dir/libs ;cd $device_dir; ./ort_benchmark"
 
