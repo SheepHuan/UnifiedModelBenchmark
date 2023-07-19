@@ -30,31 +30,28 @@ if (BUILD_NCNN)
     message("ncnn")
     set(APP_NAME "ncnn_benchmark")
     include_directories(
-        "${CMAKE_SOURCE_DIR}/include/ncnn"
+        "${CMAKE_SOURCE_DIR}/release/ncnn-20230517-android-vulkan-shared/arm64-v8a/include/ncnn"
     )
     link_directories(
-        "${CMAKE_SOURCE_DIR}/libs/ncnn-20230517-android-vulkan-shared/arm64-v8a/lib"
+        "${CMAKE_SOURCE_DIR}/release/ncnn-20230517-android-vulkan-shared/arm64-v8a/lib"
     )
     set(libs ncnn)
     add_executable(${APP_NAME} 
-    "src/ncnn_android.cpp")
+    "src/ncnn_benchmark.cpp")
 elseif (BUILD_ONNXRUNTIME)
     message("ort")
     set(APP_NAME "ort_benchmark")
     include_directories(
-        "${CMAKE_SOURCE_DIR}/libs/test/include/onnxruntime"
-        "${CMAKE_SOURCE_DIR}/libs/test/include/onnxruntime/core"
-        "${CMAKE_SOURCE_DIR}/libs/test/include/onnxruntime/core/session"
+        "${CMAKE_SOURCE_DIR}/release/onnxruntime-v1.15.1-android-shared/include/onnxruntime"
+        "${CMAKE_SOURCE_DIR}/release/onnxruntime-v1.15.1-android-shared/include/onnxruntime/core"
+        "${CMAKE_SOURCE_DIR}/release/onnxruntime-v1.15.1-android-shared/include/onnxruntime/core/session"
     )
-    # link_directories(
-    #     "/root/workspace/UnifiedModelBenchmark/libs/onnxruntime-v1.14.1-android_shared/libs"
-    # )
     link_directories(
-        "/root/workspace/UnifiedModelBenchmark/libs/test"
+        "${CMAKE_SOURCE_DIR}/release/onnxruntime-v1.15.1-android-shared/lib"
     )
     set(libs onnxruntime)
     add_executable(${APP_NAME} 
-    "src/onnxruntime_android.cpp")
+    "src/onnxruntime_benchmark.cpp")
 endif()
 
 target_link_libraries(
