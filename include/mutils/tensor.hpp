@@ -1,14 +1,13 @@
+#pragma once
 #include <string>
 #include <vector>
 #include <unordered_map>
 #include <sstream>
 #include <regex>
 #include <typeinfo>
-#include "args.hpp"
-// #include "log.hpp"
 #include <stdexcept>
 #include <assert.h>
-
+#include "mutils/init.hpp"
 
 namespace huan
 {

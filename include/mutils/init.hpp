@@ -23,6 +23,10 @@ DEFINE_int32(cpu_power_mode, 0, "power mode: "
 DEFINE_bool(enable_op_profiling, false, "enable_op_profiling");
 DEFINE_string(prefix, "", "result");
 
+// FOR PROFILE & DEBUG
+DEFINE_int32(monitor_interval, 3000, "default 3000, unit us=1e-6s");
+DEFINE_string(android_current_file, "/sys/class/power_supply/battery/current_now", "android current file, unit uA=1e-6A");
+DEFINE_string(android_voltage_file, "/sys/class/power_supply/battery/voltage_now", "android voltage file, unit uV=1e-6V");
 
 void init_env(int argc,char **argv){
     gflags::ParseCommandLineFlags(&argc, &argv, true);

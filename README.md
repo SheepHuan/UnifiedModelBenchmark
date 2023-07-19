@@ -18,7 +18,7 @@ export PATH=$PATH:/root/android_sdk/cmake/3.22.1/bin
 # cmake --build . --target paddlelite_benchmark
 # 编译onnxruntime benchmark
 
-cmake -DBUILD_ONNXRUNTIME=ON -DCMAKE_TOOLCHAIN_FILE="/root/android_sdk/ndk/25.0.8775105/build/cmake/android.toolchain.cmake" -DANDROID_ABI="arm64-v8a"  -DANDROID_PLATFORM=android-29 -G "Ninja" ..
+cmake -DBUILD_ONNXRUNTIME=ON -DBUILD_ANDROID=ON -DCMAKE_TOOLCHAIN_FILE="/root/android_sdk/ndk/25.0.8775105/build/cmake/android.toolchain.cmake" -DANDROID_ABI="arm64-v8a"  -DANDROID_PLATFORM=android-29 -G "Ninja" ..
 cmake --build . --target ort_benchmark
 # 编译ncnn benchmark
 

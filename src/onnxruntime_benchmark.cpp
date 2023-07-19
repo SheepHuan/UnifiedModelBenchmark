@@ -11,12 +11,14 @@
 #include <vector>
 #include "mutils/profile.hpp"
 #include "mutils/timer.hpp"
-#include "mutils/args.hpp"
+#include "mutils/init.hpp"
 #include <float.h>
 
 void print_args()
 {
-    LOG(INFO) <<"=================================\t"<<"Args Info"<<"\t=================================";
+    LOG(INFO) << "=================================\t"
+              << "Args Info"
+              << "\t=================================";
     std::string model_path = FLAGS_model;
     std::string backend = FLAGS_backend;
     bool enable_op_profiling = FLAGS_enable_op_profiling;
@@ -34,7 +36,9 @@ void print_args()
 
 int run(Ort::Session &session, int nums_warmup, int num_runs)
 {
-    LOG(INFO) <<"=================================\t"<<"Runtime Info"<<"\t=================================";
+    LOG(INFO) << "=================================\t"
+              << "Runtime Info"
+              << "\t=================================";
     std::vector<Ort::AllocatedStringPtr> ptrs;
     std::vector<Ort::Value> input_tensors;
     std::vector<std::string> input_names;
@@ -125,8 +129,10 @@ int run(Ort::Session &session, int nums_warmup, int num_runs)
         timer.end();
         warmup_time = warmup_time + timer.get_time();
     }
-     double latency_avg = 0, latency_std = 0,latency_max=DBL_MIN,latency_min=DBL_MAX;
+    double latency_avg = 0, latency_std = 0, latency_max = DBL_MIN, latency_min = DBL_MAX;
     std::vector<double> latency_per_rounds;
+    std::vector<double> energy_per_rounds;
+    double single_energy = 0,total_energy=0, energy_avg = 0, energy_std = 0, energy_max = DBL_MIN, energy_min = DBL_MAX;
     for (int i = 0; i < num_runs; i++)
     {
         std::vector<const char *> input_names_ptr;
@@ -142,20 +148,24 @@ int run(Ort::Session &session, int nums_warmup, int num_runs)
         timer.start();
         auto output_tensors = session.Run(Ort::RunOptions{nullptr}, input_names_ptr.data(), input_tensors.data(), input_count, output_names_ptr.data(), output_count);
         timer.end();
+        compute_power(timer.data, single_energy);
+
         latency_per_rounds.push_back(timer.get_time());
-        //  latency_max = timer.get_time() > latency_max ? timer.get_time() : latency_max;
-        // latency_min = timer.get_time() < latency_min ? timer.get_time() : latency_min;
+        energy_per_rounds.push_back(single_energy);
+        total_energy+=single_energy;
     }
-    profile_latency(latency_per_rounds, latency_per_rounds.size(),latency_min,latency_max, latency_avg, latency_std);
+    profile_latency(latency_per_rounds, latency_per_rounds.size(), latency_min, latency_max, latency_avg, latency_std);
+    profile_energy(energy_per_rounds, energy_per_rounds.size(), energy_min, energy_max, energy_avg, energy_std);
     LOG(INFO) << "warmup: " << nums_warmup << " rounds, avg time: " << warmup_time * 1.0 / nums_warmup << " us";
-    LOG(INFO) << "run: " << num_runs << " rounds, min: "<<latency_min<<" us, max: "<<latency_max <<" us, avg: " << latency_avg << " us, std: " << latency_std << " us";
+    LOG(INFO) << "run: " << num_runs << " rounds, min latency: " << latency_min << " us, max latency: " << latency_max << " us, avg latency: " << latency_avg << " us, std latency: " << latency_std << " us";
+    LOG(INFO) << "run: " << num_runs << " total energy: "<< total_energy << " mWh, rounds, min energy: " << energy_min << " mWh, max energy: " << energy_max << " mWh, avg energy: " << energy_avg << " mWh, std energy: " << energy_std << " mWh";
     return 0;
 }
 
 int main(int argc, char **argv)
 {
     // 解析命令行参数
-    init_env(argc,argv);
+    init_env(argc, argv);
     std::string model_path = FLAGS_model;
     std::string backend = FLAGS_backend;
     bool enable_op_profiling = FLAGS_enable_op_profiling;
@@ -182,10 +192,10 @@ int main(int argc, char **argv)
     else if (backend == "nnapi")
     {
         LOG(WARNING) << "flags for ort nnapi ep: NNAPI_FLAG_CPU_DISABLED";
-         /*
-            这里可以设置文档地址(https://onnxruntime.ai/docs/execution-providers/NNAPI-ExecutionProvider.html)，例如下:
-            nnapi_flags |= NNAPI_FLAG_USE_FP16;
-            */
+        /*
+           这里可以设置文档地址(https://onnxruntime.ai/docs/execution-providers/NNAPI-ExecutionProvider.html)，例如下:
+           nnapi_flags |= NNAPI_FLAG_USE_FP16;
+           */
         // #ifdef __ANDROID__
         //         uint32_t nnapi_flags = 0;
         //         nnapi_flags |= NNAPI_FLAG_CPU_DISABLED;
@@ -201,6 +211,4 @@ int main(int argc, char **argv)
         LOG(ERROR) << "unkown backend for onnxruntime: " << backend;
     }
     return 0;
-
-
 }

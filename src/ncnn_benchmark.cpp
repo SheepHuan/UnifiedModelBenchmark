@@ -6,7 +6,7 @@
 #include "mutils/tensor.hpp"
 #include "mutils/profile.hpp"
 #include "mutils/timer.hpp"
-#include "mutils/args.hpp"
+#include "mutils/init.hpp"
 
 
 void print_args()
