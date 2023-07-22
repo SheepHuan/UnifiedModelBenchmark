@@ -9,8 +9,7 @@
 #include <string>
 #include <cstdio>
 #include <vector>
-#include "mutils/profile.hpp"
-#include "mutils/timer.hpp"
+#include "mutils/profiler.hpp"
 #include "mutils/init.hpp"
 #include <float.h>
 
@@ -109,8 +108,10 @@ int run(Ort::Session &session, int nums_warmup, int num_runs)
         LOG(INFO) << i << " " << output_info;
     }
 
-    double warmup_time = 0;
-    MyTimer timer = MyTimer();
+    // double warmup_time = 0;
+    huan::benchmark::MyProfiler profiler = huan::benchmark::MyProfiler();
+    
+     std::vector<double> warmup_lat_data;
     for (int i = 0; i < nums_warmup; i++)
     {
         std::vector<const char *> input_names_ptr;
@@ -124,15 +125,15 @@ int run(Ort::Session &session, int nums_warmup, int num_runs)
         {
             output_names_ptr.push_back(output_names[i].c_str());
         }
-        timer.start();
+        profiler.start();
         auto output_tensors = session.Run(Ort::RunOptions{nullptr}, input_names_ptr.data(), input_tensors.data(), input_count, output_names_ptr.data(), output_count);
-        timer.end();
-        warmup_time = warmup_time + timer.get_time();
+        profiler.end();
+        warmup_lat_data.push_back(profiler.get_time());
     }
-    double latency_avg = 0, latency_std = 0, latency_max = DBL_MIN, latency_min = DBL_MAX;
-    std::vector<double> latency_per_rounds;
-    std::vector<double> energy_per_rounds;
-    double single_energy = 0,total_energy=0, energy_avg = 0, energy_std = 0, energy_max = DBL_MIN, energy_min = DBL_MAX;
+    
+    std::vector<double> run_lat_data;
+    std::vector<double> run_energy_data;
+    double single_energy;
     for (int i = 0; i < num_runs; i++)
     {
         std::vector<const char *> input_names_ptr;
@@ -145,20 +146,22 @@ int run(Ort::Session &session, int nums_warmup, int num_runs)
         {
             output_names_ptr.push_back(output_names[i].c_str());
         }
-        timer.start();
+        profiler.start();
         auto output_tensors = session.Run(Ort::RunOptions{nullptr}, input_names_ptr.data(), input_tensors.data(), input_count, output_names_ptr.data(), output_count);
-        timer.end();
-        compute_power(timer.data, single_energy);
+        profiler.end();
+        huan::benchmark::compute_energy_from_power(profiler.data, single_energy);
 
-        latency_per_rounds.push_back(timer.get_time());
-        energy_per_rounds.push_back(single_energy);
-        total_energy+=single_energy;
+        run_lat_data.push_back(profiler.get_time());
+        run_energy_data.push_back(single_energy);
+    
     }
-    profile_latency(latency_per_rounds, latency_per_rounds.size(), latency_min, latency_max, latency_avg, latency_std);
-    profile_energy(energy_per_rounds, energy_per_rounds.size(), energy_min, energy_max, energy_avg, energy_std);
-    LOG(INFO) << "warmup: " << nums_warmup << " rounds, avg time: " << warmup_time * 1.0 / nums_warmup << " us";
-    LOG(INFO) << "run: " << num_runs << " rounds, min latency: " << latency_min << " us, max latency: " << latency_max << " us, avg latency: " << latency_avg << " us, std latency: " << latency_std << " us";
-    LOG(INFO) << "run: " << num_runs << " total energy: "<< total_energy << " mWh, rounds, min energy: " << energy_min << " mWh, max energy: " << energy_max << " mWh, avg energy: " << energy_avg << " mWh, std energy: " << energy_std << " mWh";
+    LOG(INFO)<<"WARMUP:\t"<<huan::benchmark::show_latency_metric(warmup_lat_data);
+    LOG(INFO)<<"RUN:\t"<<huan::benchmark::show_latency_metric(run_lat_data);
+    LOG(INFO)<<"RUN:\t"<<huan::benchmark::show_energy_metric(run_energy_data);
+    // profile_energy(energy_per_rounds, energy_per_rounds.size(), energy_min, energy_max, energy_avg, energy_std);
+    // LOG(INFO) << "warmup: " << nums_warmup << " rounds, avg time: " << warmup_time * 1.0 / nums_warmup << " us";
+    // LOG(INFO) << "run: " << num_runs << " rounds, min latency: " << latency_min << " us, max latency: " << latency_max << " us, avg latency: " << latency_avg << " us, std latency: " << latency_std << " us";
+    // LOG(INFO) << " total energy: "<< total_energy << " mWh, rounds, min energy: " << energy_min << " mWh, max energy: " << energy_max << " mWh, avg energy: " << energy_avg << " mWh, std energy: " << energy_std << " mWh";
     return 0;
 }
 

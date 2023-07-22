@@ -1,5 +1,5 @@
 #!/bin/bash
-export device="3a9c4f5"
+export device="192.168.1.105:5555"
 export device_dir="/data/local/tmp/hcp"
 
 adb -s $device shell "mkdir -p $device_dir/models $device_dir/libs"

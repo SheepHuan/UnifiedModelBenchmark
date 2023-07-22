@@ -24,6 +24,8 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/inlcude/mutils"
 )
 
+file(GLOB PUBLIC_CPP_SOURCES "src/mutils/*.cpp")
+
 if(BUILD_TEST)
     set(APP_NAME "test")
     set(libs "")
@@ -37,6 +39,7 @@ else()
 
         if(BUILD_LINUX_CPU)
             include_directories(
+                "${CMAKE_SOURCE_DIR}/release/ncnn-20230517-android-vulkan-shared/arm64-v8a/include"
                 "${CMAKE_SOURCE_DIR}/release/ncnn-20230517-ubuntu-2204-shared/include/ncnn"
             )
             link_directories(
@@ -44,6 +47,7 @@ else()
             )
         elseif(BUILD_ANDROID)
             include_directories(
+                "${CMAKE_SOURCE_DIR}/release/ncnn-20230517-android-vulkan-shared/arm64-v8a/include"
                 "${CMAKE_SOURCE_DIR}/release/ncnn-20230517-android-vulkan-shared/arm64-v8a/include/ncnn"
             )
             link_directories(
@@ -53,7 +57,8 @@ else()
 
         set(libs ncnn)
         add_executable(${APP_NAME}
-            "src/ncnn_benchmark.cpp")
+            "src/benchmark/ncnn_benchmark.cpp"
+            ${PUBLIC_CPP_SOURCES})
     elseif(BUILD_ONNXRUNTIME)
         message("ort")
         set(APP_NAME "ort_benchmark")
@@ -80,7 +85,8 @@ else()
 
         set(libs onnxruntime)
         add_executable(${APP_NAME}
-            "src/onnxruntime_benchmark.cpp")
+            "src/benchmark/onnxruntime_benchmark.cpp"
+            ${PUBLIC_CPP_SOURCES})
     endif()
 endif()
 

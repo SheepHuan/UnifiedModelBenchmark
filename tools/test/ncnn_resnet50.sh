@@ -1,5 +1,5 @@
 #!/bin/bash
-export adb_device="3a9c4f5"
+export adb_device="192.168.1.105:5555 "
 export workspace="/data/local/tmp/hcp"
 
 adb -s $adb_device shell "mkdir -p $workspace/models $workspace/libs"

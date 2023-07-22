@@ -36,7 +36,7 @@ void run(std::shared_ptr<PaddlePredictor> predictor, huan::benchmark::MTensorDic
         memset(data, 1, huan::benchmark::shape_production(input_tensor->shape()) * sizeof(float));
 
     }
-    MyTimer timer = MyTimer();
+    MyProfiler timer = MyProfiler();
     double latency_avg = 0, latency_std = 0, latency_max = DBL_MIN, latency_min = DBL_MAX;
     std::vector<double> latency_per_rounds;
 

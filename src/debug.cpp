@@ -6,7 +6,7 @@ int main(int argc, char **argv)
 {
     init_env(argc, argv);
 
-    MyTimer timer = MyTimer();
+    MyProfiler timer = MyProfiler();
     /*
     ./test --android_current_file=/root/workspace/UnifiedModelBenchmark/tmp/1 --android_voltage_file=/root/workspace/UnifiedModelBenchmark/tmp/2
     */

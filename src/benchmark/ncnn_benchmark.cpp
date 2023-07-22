@@ -4,10 +4,8 @@
 #include "gpu.h"
 #include <iostream>
 #include "mutils/tensor.hpp"
-#include "mutils/profile.hpp"
-#include "mutils/timer.hpp"
+#include "mutils/profiler.hpp"
 #include "mutils/init.hpp"
-
 
 void print_args()
 {
@@ -75,10 +73,10 @@ void run(const char *model_path, const char *param_path,
         LOG(INFO) << i << " input: " << input_names[i] << ", WxHxDxC: " << shape[3] << "x" << shape[2] << "x" << 1 << "x" << shape[1];
     }
 
-    MyTimer timer = MyTimer();
-    double warmup_time = 0;
-    double latency_avg = 0, latency_std = 0, latency_max = DBL_MIN, latency_min = DBL_MAX;
-    std::vector<double> latency_per_rounds;
+    huan::benchmark::MyProfiler timer = huan::benchmark::MyProfiler();
+
+    std::vector<double> warmup_lat_data;
+    std::vector<double> run_lat_data;
     for (int i = 0; i < nums_warmup; i++)
     {
         ncnn::Extractor ex = net.create_extractor();
@@ -97,7 +95,7 @@ void run(const char *model_path, const char *param_path,
             ex.extract(output_names[i], out);
         }
         timer.end();
-        warmup_time = warmup_time + timer.get_time();
+        warmup_lat_data.push_back(timer.get_time());
     }
 
     for (int i = 0; i < num_runs; i++)
@@ -120,18 +118,17 @@ void run(const char *model_path, const char *param_path,
             }
         }
         timer.end();
-        latency_per_rounds.push_back(timer.get_time());
+        run_lat_data.push_back(timer.get_time());
     }
+    LOG(INFO) << "WARMUP:\t" << huan::benchmark::show_latency_metric(warmup_lat_data);
+    LOG(INFO) << "RUN:\t" << huan::benchmark::show_latency_metric(warmup_lat_data);
   
-    profile_latency(latency_per_rounds, latency_per_rounds.size(),latency_min,latency_max, latency_avg, latency_std);
-    LOG(INFO) << "warmup: " << nums_warmup << " rounds, avg time: " << warmup_time * 1.0 / nums_warmup << " us";
-    LOG(INFO) << "run: " << num_runs << " rounds, min: " << latency_min << " us, max: " << latency_max << " us, avg: " << latency_avg << " us, std: " << latency_std << " us";
 }
 
 int main(int argc, char **argv)
 {
     // 解析命令行参数
-    init_env(argc,argv);
+    init_env(argc, argv);
     std::string model_path = FLAGS_model;
     std::string param_path = FLAGS_param;
     std::string backend = FLAGS_backend;
@@ -139,7 +136,7 @@ int main(int argc, char **argv)
     int nums_warmup = FLAGS_num_warmup;
     int num_runs = FLAGS_num_runs;
     std::string str_input_info = FLAGS_input_info;
-  
+
     std::vector<huan::benchmark::MTensorInfo> input_tensors_info;
     huan::benchmark::parse_tensor_info(str_input_info, input_tensors_info);
     huan::benchmark::MTensorDict input_tensors_dict(input_tensors_info);
