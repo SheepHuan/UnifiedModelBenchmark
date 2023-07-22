@@ -24,7 +24,7 @@ void print_args()
     LOG(INFO) << "param path: " << param_path;
     LOG(INFO) << "backend: " << backend;
     LOG(INFO) << "cpu threads: " << num_threads;
-    LOG(INFO) << "nums_warmup: " << nums_warmup;
+    LOG(INFO) << "num_warmup: " << nums_warmup;
     LOG(INFO) << "num_runs: " << num_runs;
     LOG(INFO) << "input_info: " << input_info;
     // LOG(INFO) << "output_info: " << output_info;

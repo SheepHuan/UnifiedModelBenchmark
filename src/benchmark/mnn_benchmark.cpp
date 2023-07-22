@@ -98,7 +98,7 @@ int main(int argc, char **argv)
     LOG(INFO) << "model path: " << model_path;
     LOG(INFO) << "backend: " << backend;
     LOG(INFO) << "cpu threads: " << num_threads;
-    LOG(INFO) << "nums_warmup: " << num_warmup;
+    LOG(INFO) << "num_warmup: " << num_warmup;
     LOG(INFO) << "num_runs: " << num_runs;
 
 

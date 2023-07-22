@@ -29,7 +29,7 @@ void print_args()
     LOG(INFO) << "model path: " << model_path;
     LOG(INFO) << "backend: " << backend;
     LOG(INFO) << "cpu threads: " << num_threads;
-    LOG(INFO) << "nums_warmup: " << nums_warmup;
+    LOG(INFO) << "num_warmup: " << nums_warmup;
     LOG(INFO) << "num_runs: " << num_runs;
 }
 
@@ -132,7 +132,7 @@ int run(Ort::Session &session, int nums_warmup, int num_runs)
     }
 
     std::vector<double> run_lat_data;
-    std::vector<double> run_energy_data;
+    // std::vector<double> run_energy_data;
     double single_energy;
     for (int i = 0; i < num_runs; i++)
     {
@@ -152,8 +152,8 @@ int run(Ort::Session &session, int nums_warmup, int num_runs)
         run_lat_data.push_back(profiler.get_time());
 #ifdef __ANDROID__
 
-        huan::benchmark::compute_energy_from_power(profiler.data, single_energy);
-        run_energy_data.push_back(single_energy);
+        // huan::benchmark::compute_energy_from_power(profiler.data, single_energy);
+        // run_energy_data.push_back(single_energy);
 
 #endif
     }
@@ -161,7 +161,7 @@ int run(Ort::Session &session, int nums_warmup, int num_runs)
     LOG(INFO) << "RUN:\t" << huan::benchmark::show_latency_metric(run_lat_data);
 #ifdef __ANDROID__
 
-    LOG(INFO) << "RUN:\t" << huan::benchmark::show_energy_metric(run_energy_data);
+    // LOG(INFO) << "RUN:\t" << huan::benchmark::show_energy_metric(run_energy_data);
 
 #endif
     // profile_energy(energy_per_rounds, energy_per_rounds.size(), energy_min, energy_max, energy_avg, energy_std);
