@@ -16,7 +16,7 @@
 void print_args()
 {
     LOG(INFO) << "=================================\t"
-              << "Args Info"
+              << "ONNXRUNTIME Args Info"
               << "\t=================================";
     std::string model_path = FLAGS_model;
     std::string backend = FLAGS_backend;
@@ -110,8 +110,8 @@ int run(Ort::Session &session, int nums_warmup, int num_runs)
 
     // double warmup_time = 0;
     huan::benchmark::MyProfiler profiler = huan::benchmark::MyProfiler();
-    
-     std::vector<double> warmup_lat_data;
+
+    std::vector<double> warmup_lat_data;
     for (int i = 0; i < nums_warmup; i++)
     {
         std::vector<const char *> input_names_ptr;
@@ -130,7 +130,7 @@ int run(Ort::Session &session, int nums_warmup, int num_runs)
         profiler.end();
         warmup_lat_data.push_back(profiler.get_time());
     }
-    
+
     std::vector<double> run_lat_data;
     std::vector<double> run_energy_data;
     double single_energy;
@@ -149,15 +149,21 @@ int run(Ort::Session &session, int nums_warmup, int num_runs)
         profiler.start();
         auto output_tensors = session.Run(Ort::RunOptions{nullptr}, input_names_ptr.data(), input_tensors.data(), input_count, output_names_ptr.data(), output_count);
         profiler.end();
-        huan::benchmark::compute_energy_from_power(profiler.data, single_energy);
-
         run_lat_data.push_back(profiler.get_time());
+#ifdef __ANDROID__
+
+        huan::benchmark::compute_energy_from_power(profiler.data, single_energy);
         run_energy_data.push_back(single_energy);
-    
+
+#endif
     }
-    LOG(INFO)<<"WARMUP:\t"<<huan::benchmark::show_latency_metric(warmup_lat_data);
-    LOG(INFO)<<"RUN:\t"<<huan::benchmark::show_latency_metric(run_lat_data);
-    LOG(INFO)<<"RUN:\t"<<huan::benchmark::show_energy_metric(run_energy_data);
+    LOG(INFO) << "WARMUP:\t" << huan::benchmark::show_latency_metric(warmup_lat_data);
+    LOG(INFO) << "RUN:\t" << huan::benchmark::show_latency_metric(run_lat_data);
+#ifdef __ANDROID__
+
+    LOG(INFO) << "RUN:\t" << huan::benchmark::show_energy_metric(run_energy_data);
+
+#endif
     // profile_energy(energy_per_rounds, energy_per_rounds.size(), energy_min, energy_max, energy_avg, energy_std);
     // LOG(INFO) << "warmup: " << nums_warmup << " rounds, avg time: " << warmup_time * 1.0 / nums_warmup << " us";
     // LOG(INFO) << "run: " << num_runs << " rounds, min latency: " << latency_min << " us, max latency: " << latency_max << " us, avg latency: " << latency_avg << " us, std latency: " << latency_std << " us";

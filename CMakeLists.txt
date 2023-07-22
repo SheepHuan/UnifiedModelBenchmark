@@ -6,8 +6,9 @@ set(CMAKE_CXX_STANDARD 14)
 # SET(CMAKE_BUILD_TYPE "Debug")
 # SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")
 # SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
-option(BUILD_ONNXRUNTIME "" ON)
+option(BUILD_ONNXRUNTIME "" OFF)
 option(BUILD_NCNN "" OFF)
+option(BUILD_MNN "" OFF)
 
 option(BUILD_LINUX_CPU "" OFF)
 option(BUILD_ANDROID "" OFF)
@@ -33,7 +34,42 @@ if(BUILD_TEST)
         "src/debug.cpp")
 else()
     # framework option
-    if(BUILD_NCNN)
+    if(BUILD_MNN)
+        message("ncnn")
+        set(APP_NAME "mnn_benchmark")
+
+        if(BUILD_LINUX_CPU)
+            include_directories(
+                "${CMAKE_SOURCE_DIR}/release/mnn_2.6.0_linux_x64_cpu/include"
+                "${CMAKE_SOURCE_DIR}/release/mnn_2.6.0_linux_x64_cpu/include/MNN"
+            )
+            link_directories(
+                "${CMAKE_SOURCE_DIR}/release/mnn_2.6.0_linux_x64_cpu/lib"
+            )
+            set(libs
+                MNN
+                MNN_Express)
+        elseif(BUILD_ANDROID)
+            include_directories(
+                "${CMAKE_SOURCE_DIR}/release/mnn_2.6.0_android_armv7_armv8_cpu_opencl_vulkan/include"
+                "${CMAKE_SOURCE_DIR}/release/mnn_2.6.0_android_armv7_armv8_cpu_opencl_vulkan/include/MNN"
+            )
+            link_directories(
+                "${CMAKE_SOURCE_DIR}/release/mnn_2.6.0_android_armv7_armv8_cpu_opencl_vulkan/arm64-v8a"
+            )
+            set(libs
+                mnncore
+                MNN_CL
+                MNN_Vulkan
+                MNN
+                MNN_Express)
+        endif()
+
+        add_executable(${APP_NAME}
+            "src/benchmark/mnn_benchmark.cpp"
+            ${PUBLIC_CPP_SOURCES})
+
+    elseif(BUILD_NCNN)
         message("ncnn")
         set(APP_NAME "ncnn_benchmark")
 

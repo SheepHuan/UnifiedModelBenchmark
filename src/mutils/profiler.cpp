@@ -16,9 +16,14 @@ namespace huan
             std::string voltage_file = FLAGS_android_voltage_file;
             int32_t interval = FLAGS_monitor_interval;
 
-            this->data.clear();
-            this->is_monitor_running = true;
-            this->power_monitor_thread = std::thread(&MyProfiler::monitoring_power, this, current_file, voltage_file, interval, std::ref(this->data));
+#ifdef __ANDROID__
+            if (this->use_energy_profile)
+            {
+                this->data.clear();
+                this->is_monitor_running = true;
+                this->power_monitor_thread = std::thread(&MyProfiler::monitoring_power, this, current_file, voltage_file, interval, std::ref(this->data));
+            }
+#endif
 
             this->start_time = std::chrono::high_resolution_clock::now();
         }
@@ -26,9 +31,13 @@ namespace huan
         void MyProfiler::end()
         {
             this->end_time = std::chrono::high_resolution_clock::now();
-
-            this->is_monitor_running = false;
-            this->power_monitor_thread.join();
+#ifdef __ANDROID__
+            if (this->use_energy_profile)
+            {
+                this->is_monitor_running = false;
+                this->power_monitor_thread.join();
+            }
+#endif
         }
 
         double MyProfiler::get_time()

@@ -26,6 +26,18 @@ cmake -DBUILD_NCNN=ON -DBUILD_ANDROID=ON -DCMAKE_TOOLCHAIN_FILE="/root/android_s
 cmake --build . --target ncnn_benchmark
 
 
+
+cmake -DBUILD_MNN=ON -DBUILD_ANDROID=ON \
+-DCMAKE_TOOLCHAIN_FILE="/root/android_sdk/ndk/25.0.8775105/build/cmake/android.toolchain.cmake" \
+-DANDROID_ABI="arm64-v8a"  \
+-DANDROID_PLATFORM=android-29 \
+-G "Ninja" ..
+
+# cmake -DBUILD_MNN=ON -DBUILD_LINUX_CPU=ON -G "Ninja" ..
+cmake --build . --target mnn_benchmark
+./mnn_benchmark --model="/root/workspace/UnifiedModelBenchmark/tmp/models/mnn/resnet50.mnn" \
+--backend="X64
+
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/data/local/tmp/hcp/libs
 ```
 cd 

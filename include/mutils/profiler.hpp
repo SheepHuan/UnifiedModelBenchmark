@@ -7,7 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <cfloat>
-
+#include <cmath>
 
 namespace huan
 {
@@ -44,11 +44,12 @@ namespace huan
             std::chrono::high_resolution_clock::time_point start_time, end_time;
 
             /* control */
-            // TODO 考虑加锁?
             bool is_monitor_running;
             std::thread power_monitor_thread;
 
         public:
+            bool use_lat_profile = true;
+            bool use_energy_profile = false;
             std::vector<huan::benchmark::RuntimeProileData> data;
 
             MyProfiler();
@@ -66,7 +67,7 @@ namespace huan
 
         void compute_min_max_avg_std(const std::vector<double> arr, double &min_val, double &max_val, double &avg_val, double &std_val);
         std::string show_latency_metric(const std::vector<double> latency);
-        void compute_energy_from_power(const std::vector<huan::benchmark::RuntimeProileData> power_data,double &energy);
+        void compute_energy_from_power(const std::vector<huan::benchmark::RuntimeProileData> power_data, double &energy);
         std::string show_energy_metric(const std::vector<double> power);
     }
 

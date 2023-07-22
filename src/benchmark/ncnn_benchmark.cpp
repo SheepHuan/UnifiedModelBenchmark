@@ -18,7 +18,7 @@ void print_args()
     std::string input_info = FLAGS_input_info;
     // std::string output_info = FLAGS_output_info;
     LOG(INFO) << "=================================\t"
-              << "Args Info"
+              << "NCNN Args Info"
               << "\t=================================";
     LOG(INFO) << "model path: " << model_path;
     LOG(INFO) << "param path: " << param_path;
