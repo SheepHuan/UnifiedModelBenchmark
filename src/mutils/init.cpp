@@ -4,7 +4,7 @@ DEFINE_string(param, "", "paddlelite/ncnn param path");
 DEFINE_string(backend, "arm", R"(paddlelite: arm,opencl"
                               "onnxruntime: arm,nnapi"
                               "ncnn: arm,vulkan"
-                              "mnn: arm,x64,nnapi,opencl)");
+                              "mnn: arm,x64,nnapi,opencl,hw_npu)");
 DEFINE_int32(num_warmup, 3, "num warmup");
 DEFINE_int32(num_runs, 10, "num runs");
 DEFINE_int32(num_threads, 4, "num threads");
@@ -21,6 +21,14 @@ DEFINE_int32(cpu_power_mode, 0, R"(power mode: "
 // FOR ONNXRUNTIME
 DEFINE_bool(enable_op_profiling, false, "enable_op_profiling");
 DEFINE_string(prefix, "", "result");
+
+// FOR MNN
+DEFINE_string(cl_mem_type, "cl_mem_buffer", "cl_mem_type");
+DEFINE_int32(mnn_precision, 0, "mnn_precision"
+                              "0: normal"
+                              "1: high"
+                              "2: low"
+                              "3: low_bf16");
 
 // FOR PROFILE & DEBUG
 DEFINE_int32(monitor_interval, 3000, "default 3000, unit us=1e-6s");

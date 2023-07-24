@@ -27,7 +27,7 @@ cmake --build . --target ncnn_benchmark
 
 
 
-cmake -DBUILD_MNN=ON -DBUILD_ANDROID=ON \
+cmake -DBUILD_MNN=ON -DBUILD_ANDROID=ON -DBUILD_HW_NPU=ON \
 -DCMAKE_TOOLCHAIN_FILE="/root/android_sdk/ndk/25.0.8775105/build/cmake/android.toolchain.cmake" \
 -DANDROID_ABI="arm64-v8a"  \
 -DANDROID_PLATFORM=android-29 \

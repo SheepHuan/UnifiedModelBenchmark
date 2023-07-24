@@ -12,7 +12,9 @@ option(BUILD_MNN "" OFF)
 
 option(BUILD_LINUX_CPU "" OFF)
 option(BUILD_ANDROID "" OFF)
+option(BUILD_HW_NPU "" OFF)
 
+# FOR MNN
 option(BUILD_TEST "" OFF)
 
 add_subdirectory("3rd-party/gflags")
@@ -51,18 +53,31 @@ else()
                 MNN_Express)
         elseif(BUILD_ANDROID)
             include_directories(
-                "${CMAKE_SOURCE_DIR}/release/mnn_2.6.0_android_armv7_armv8_cpu_opencl_vulkan/include"
-                "${CMAKE_SOURCE_DIR}/release/mnn_2.6.0_android_armv7_armv8_cpu_opencl_vulkan/include/MNN"
+                "${CMAKE_SOURCE_DIR}/release/mnn_2.6.0-android_armv8_cpu_opencl_vulkan_npu/include"
+                "${CMAKE_SOURCE_DIR}/release/mnn_2.6.0-android_armv8_cpu_opencl_vulkan_npu/include/MNN"
             )
             link_directories(
-                "${CMAKE_SOURCE_DIR}/release/mnn_2.6.0_android_armv7_armv8_cpu_opencl_vulkan/arm64-v8a"
+                "${CMAKE_SOURCE_DIR}/release/mnn_2.6.0-android_armv8_cpu_opencl_vulkan_npu/arm64-v8a"
             )
-            set(libs
-                mnncore
-                MNN_CL
-                MNN_Vulkan
-                MNN
-                MNN_Express)
+
+            if(BUILD_HW_NPU)
+                set(libs
+                    MNN
+                    MNN_CL
+                    MNN_Vulkan
+                    MNN_Express
+                    plugin_matmul
+                    hiai
+                    hiai_ir
+                    hiai_ir_build
+                    MNN_NPU)
+            else()
+                set(libs
+                    MNN_CL
+                    MNN_Vulkan
+                    MNN
+                    MNN_Express)
+            endif()
         endif()
 
         add_executable(${APP_NAME}

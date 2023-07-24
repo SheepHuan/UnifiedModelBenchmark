@@ -14,4 +14,4 @@ adb -s $device push --sync /root/workspace/UnifiedModelBenchmark/build/mnn_bench
 adb -s $device shell "chmod +x $device_dir/mnn_benchmark"
 adb -s $device shell "export LD_LIBRARY_PATH=/data/local/tmp/hcp/libs ; cd $device_dir; ./mnn_benchmark \
 --model=$device_dir/models/resnet50.mnn \
---backend=nnapi --num_warmup=10 --num_runs=50 --num_threads=4"
+--backend=opencl --num_warmup=10 --num_runs=50 --num_threads=4 --cl_mem_type=cl_mem_image --mnn_precision=2"

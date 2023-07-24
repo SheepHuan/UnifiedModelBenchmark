@@ -19,6 +19,11 @@ DECLARE_int32(cpu_power_mode);
 DECLARE_bool(enable_op_profiling);
 DECLARE_string(prefix);
 
+// FOR MNN
+DECLARE_string(cl_mem_type);
+DECLARE_int32(mnn_precision);
+// DECLARE_string(mnn_power_mode);
+
 // FOR PROFILE & DEBUG
 DECLARE_int32(monitor_interval);
 DECLARE_string(android_current_file);
